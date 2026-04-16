@@ -1,0 +1,107 @@
+/*
+ * Datos de ejemplo (mock) para simular posts del blog.
+ * Cuando tengamos el backend, estos datos vendrán de la API.
+ */
+const MOCK_POSTS = [
+  {
+    slug: 'ansiedad-como-gestionarla',
+    image: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=600&q=80',
+    category: 'Ansiedad',
+    title: '¿Qué es la ansiedad y cómo puedo gestionarla?',
+    excerpt: 'La ansiedad es una respuesta natural del cuerpo ante situaciones de estrés. Descubre técnicas probadas para aprender a convivir con ella de forma saludable.',
+    date: '12 Abril, 2026',
+    readTime: 5,
+    content: [
+      'La ansiedad es una emoción que todos experimentamos en algún momento de nuestras vidas. Es una respuesta natural de nuestro organismo ante situaciones que percibimos como amenazantes o desafiantes. Sin embargo, cuando esta respuesta se vuelve desproporcionada o persistente, puede convertirse en un problema que afecta significativamente nuestra calidad de vida.',
+      'Es importante entender que sentir ansiedad no es sinónimo de debilidad. De hecho, la ansiedad cumple una función adaptativa: nos prepara para enfrentar peligros y nos mantiene alerta. El problema surge cuando nuestro sistema de alarma se activa en situaciones que no representan un peligro real.',
+      '¿Cuáles son los síntomas más comunes? La ansiedad puede manifestarse de muchas formas: palpitaciones, sudoración, tensión muscular, dificultad para respirar, pensamientos recurrentes, insomnio o irritabilidad. Cada persona la experimenta de manera diferente, y por eso es fundamental un abordaje personalizado.',
+      'Existen diversas técnicas respaldadas por la evidencia científica que pueden ayudarnos a gestionar la ansiedad de forma efectiva. La respiración diafragmática es una de las herramientas más sencillas y poderosas: consiste en respirar lenta y profundamente, inflando el abdomen en lugar del pecho, lo que activa nuestro sistema nervioso parasimpático y nos ayuda a calmarnos.',
+      'La reestructuración cognitiva es otra técnica fundamental. Consiste en identificar los pensamientos automáticos negativos que alimentan nuestra ansiedad y cuestionarlos de manera racional. ¿Realmente es tan catastrófico lo que estoy pensando? ¿Qué evidencia tengo a favor y en contra de esta idea?',
+      'El ejercicio físico regular, la higiene del sueño y una alimentación equilibrada también juegan un papel crucial en la regulación de la ansiedad. Nuestro cuerpo y nuestra mente están íntimamente conectados, y cuidar de uno implica cuidar del otro.',
+      'Si sientes que la ansiedad está limitando tu vida cotidiana, no dudes en buscar ayuda profesional. Un psicólogo puede ayudarte a comprender las raíces de tu ansiedad y proporcionarte herramientas personalizadas para manejarla de forma eficaz.',
+    ],
+  },
+  {
+    slug: 'autoestima-pilares-fundamentales',
+    image: 'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=600&q=80',
+    category: 'Autoestima',
+    title: 'Los 5 pilares fundamentales de la autoestima',
+    excerpt: 'Construir una autoestima sólida es imprescindible para nuestro bienestar. Conoce los cinco pilares que la sustentan y cómo trabajar en cada uno de ellos.',
+    date: '5 Abril, 2026',
+    readTime: 7,
+    content: [
+      'La autoestima es la valoración que hacemos de nosotros mismos. No es algo estático, sino un proceso dinámico que se construye y se transforma a lo largo de toda nuestra vida. Tener una autoestima saludable no significa creerse perfecto, sino aceptarse con virtudes y limitaciones.',
+      'El primer pilar es el autoconocimiento. Conocernos a nosotros mismos, nuestras fortalezas, debilidades, valores y motivaciones es el punto de partida. Sin autoconocimiento, construimos nuestra identidad sobre las expectativas de los demás en lugar de sobre nuestros propios cimientos.',
+      'El segundo pilar es la autoaceptación. Aceptar quiénes somos, incluyendo aquellos aspectos que nos gustaría cambiar, es esencial. La autoaceptación no significa resignación, sino reconocer nuestra realidad presente como punto de partida para el crecimiento.',
+      'El tercer pilar es la autoresponsabilidad. Asumir la responsabilidad de nuestras decisiones, acciones y emociones nos empodera. Cuando dejamos de culpar a los demás o a las circunstancias, recuperamos el control sobre nuestra vida.',
+      'El cuarto pilar es la autoafirmación. Expresar nuestras necesidades, deseos y opiniones de manera asertiva es fundamental. La autoafirmación implica respetar nuestros propios límites y comunicarlos con claridad.',
+      'El quinto pilar es el propósito vital. Tener metas y objetivos que den sentido a nuestra vida fortalece nuestra autoestima. No se trata de grandes logros, sino de vivir de acuerdo con nuestros valores y contribuir de alguna forma al mundo que nos rodea.',
+    ],
+  },
+  {
+    slug: 'mindfulness-vida-diaria',
+    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&q=80',
+    category: 'Mindfulness',
+    title: 'Cómo integrar el mindfulness en tu día a día',
+    excerpt: 'La atención plena no requiere horas de meditación. Te enseñamos ejercicios sencillos que puedes incorporar a tu rutina desde hoy mismo.',
+    date: '28 Marzo, 2026',
+    readTime: 4,
+    content: [
+      'El mindfulness o atención plena es la capacidad de estar plenamente presente en el momento actual, sin juzgar lo que estamos experimentando. Aunque tiene sus raíces en tradiciones milenarias, la ciencia moderna ha confirmado sus numerosos beneficios para la salud mental.',
+      'No necesitas retirarte a un monasterio para practicarlo. El mindfulness se puede integrar en las actividades más cotidianas: al comer, al caminar, al ducharte o incluso al lavar los platos. La clave está en prestar atención intencionada a lo que estás haciendo en cada momento.',
+      'Un ejercicio sencillo para empezar es la "pausa consciente". Varias veces al día, detente durante 30 segundos. Cierra los ojos si puedes, siente tus pies en el suelo, nota tu respiración. Observa qué pensamientos pasan por tu mente sin intentar cambiarlos. Después, continúa con lo que estabas haciendo.',
+      'Otro ejercicio poderoso es el "escaneo corporal". Túmbate o siéntate cómodamente y recorre mentalmente cada parte de tu cuerpo, desde los pies hasta la cabeza, notando las sensaciones que encuentras: tensión, calor, cosquilleo... Sin juzgar, solo observando.',
+      'La práctica regular del mindfulness reduce el estrés, mejora la concentración, favorece la regulación emocional y fortalece nuestro sistema inmunológico. Bastará con unos minutos diarios para empezar a notar cambios significativos en cómo te relacionas contigo mismo y con tu entorno.',
+    ],
+  },
+  {
+    slug: 'relaciones-toxicas-identificarlas',
+    image: 'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=600&q=80',
+    category: 'Relaciones',
+    title: 'Señales para identificar una relación tóxica',
+    excerpt: 'No siempre es fácil reconocer patrones dañinos en nuestras relaciones. Aprende a identificar las señales de alerta y cómo actuar ante ellas.',
+    date: '20 Marzo, 2026',
+    readTime: 6,
+    content: [
+      'Las relaciones tóxicas pueden adoptar muchas formas y no siempre son fáciles de identificar, especialmente cuando estamos inmersos en ellas. Pueden darse en el ámbito de la pareja, la familia, la amistad o el trabajo.',
+      'Una de las señales más claras es la sensación constante de agotamiento emocional. Si después de interactuar con alguien te sientes sistemáticamente drenado, triste o ansioso, es momento de prestar atención.',
+      'El control excesivo es otra bandera roja. Cuando alguien intenta controlar con quién te relacionas, qué haces, cómo vistes o cómo piensas, está vulnerando tu autonomía personal.',
+      'La manipulación emocional se manifiesta de formas sutiles: el chantaje emocional, la culpabilización ("si me quisieras de verdad..."), la invalidación de tus sentimientos ("estás exagerando") o el gaslighting (hacerte dudar de tu propia percepción de la realidad).',
+      'Reconocer que estamos en una relación tóxica es el primer paso para salir de ella. No es fácil y a menudo requiere apoyo profesional. Si te identificas con alguna de estas señales, te animo a buscar ayuda. Mereces relaciones que te nutran, no que te consuman.',
+    ],
+  },
+  {
+    slug: 'duelo-etapas-superacion',
+    image: 'https://images.unsplash.com/photo-1476611317561-60117649dd94?w=600&q=80',
+    category: 'Duelo',
+    title: 'Las etapas del duelo y claves para la superación',
+    excerpt: 'El duelo es un proceso natural que todos atravesamos. Conoce sus etapas y descubre herramientas para acompañarte en el camino hacia la aceptación.',
+    date: '10 Marzo, 2026',
+    readTime: 8,
+    content: [
+      'El duelo es la respuesta natural ante una pérdida significativa. No solo se refiere a la muerte de un ser querido; también podemos experimentar duelo por la ruptura de una relación, la pérdida de un empleo, un cambio de ciudad o cualquier situación que implique dejar atrás algo importante.',
+      'La psiquiatra Elisabeth Kübler-Ross describió cinco etapas del duelo: negación, ira, negociación, depresión y aceptación. Es importante entender que estas etapas no son lineales ni universales. No todo el mundo las experimenta todas, ni en el mismo orden.',
+      'La negación es un mecanismo de defensa que nos ayuda a amortiguar el impacto inicial de la pérdida. La ira puede dirigirse hacia nosotros mismos, hacia los demás o incluso hacia la persona que hemos perdido. La negociación suele manifestarse como pensamientos del tipo "si hubiera hecho esto...".',
+      'La fase depresiva no es una enfermedad mental, sino una respuesta natural de profunda tristeza ante la magnitud de lo perdido. Finalmente, la aceptación no significa estar de acuerdo con lo ocurrido, sino integrar la pérdida como parte de nuestra historia vital.',
+      'Darte permiso para sentir, buscar apoyo en tu entorno y, si lo necesitas, acudir a un profesional son pasos fundamentales. No hay un tiempo establecido para superar un duelo. Cada persona tiene su propio ritmo y merece respeto en su proceso.',
+    ],
+  },
+  {
+    slug: 'habitos-sueno-saludable',
+    image: 'https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=600&q=80',
+    category: 'Bienestar',
+    title: 'Hábitos para un sueño reparador y saludable',
+    excerpt: 'Dormir bien es esencial para nuestra salud mental. Descubre qué hábitos pueden ayudarte a mejorar la calidad de tu descanso nocturno.',
+    date: '2 Marzo, 2026',
+    readTime: 5,
+    content: [
+      'El sueño es uno de los pilares fundamentales de nuestra salud mental y física. Durante las horas de descanso, nuestro cerebro procesa la información del día, consolida recuerdos y realiza funciones de reparación celular esenciales.',
+      'La higiene del sueño se refiere al conjunto de hábitos y condiciones que favorecen un descanso de calidad. El primer paso es establecer horarios regulares: acostarse y levantarse a la misma hora, incluso los fines de semana, ayuda a regular nuestro reloj biológico interno.',
+      'El entorno también importa. Tu dormitorio debe ser un lugar asociado al descanso: oscuro, silencioso, con una temperatura agradable y libre de pantallas. La luz azul de los dispositivos electrónicos interfiere con la producción de melatonina, la hormona del sueño.',
+      'Evita la cafeína y las comidas copiosas en las horas previas a acostarte. En cambio, establece una rutina relajante antes de dormir: leer, tomar una infusión, practicar respiración profunda o estiramientos suaves pueden preparar tu cuerpo y tu mente para el descanso.',
+      'Si llevas tiempo con problemas de sueño, no lo normalices. El insomnio crónico puede ser síntoma de ansiedad, depresión u otros problemas de salud mental. Consulta con un profesional que pueda ayudarte a identificar la causa y encontrar una solución adecuada.',
+    ],
+  },
+];
+
+export default MOCK_POSTS;

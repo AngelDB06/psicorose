@@ -37,6 +37,15 @@ function Navbar() {
             </Link>
           ))}
           <Link
+            to="/login"
+            className="text-primary-600 hover:text-primary-700 font-semibold transition-colors flex items-center gap-1.5"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+            </svg>
+            Iniciar Sesión
+          </Link>
+          <Link
             to="/reservar"
             className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-2.5 rounded-full transition-all shadow-sm shadow-primary-200"
           >
@@ -72,6 +81,16 @@ function Navbar() {
               {label}
             </Link>
           ))}
+          <Link
+            to="/login"
+            onClick={() => setMenuOpen(false)}
+            className="py-2 text-sm font-semibold rounded-lg px-3 transition-colors text-slate-600 hover:bg-primary-50 hover:text-primary-600 flex items-center gap-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+            </svg>
+            Iniciar Sesión
+          </Link>
           <Link
             to="/reservar"
             onClick={() => setMenuOpen(false)}
