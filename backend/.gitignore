@@ -1,0 +1,4 @@
+# Variables de entorno (contienen secrets)
+.env
+node_modules/
+logs/

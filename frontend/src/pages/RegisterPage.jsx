@@ -182,24 +182,6 @@ function RegisterPage() {
               </div>
             </div>
 
-            {/* Aceptar términos */}
-            <label className="flex items-start gap-3 cursor-pointer pt-1">
-              <input
-                type="checkbox"
-                required
-                className="mt-1 w-4 h-4 rounded border-primary-300 text-primary-500 focus:ring-primary-400"
-              />
-              <span className="text-sm text-slate-600 leading-snug">
-                Acepto la{' '}
-                <a href="#" className="text-primary-600 hover:text-primary-700 font-semibold">
-                  Política de Privacidad
-                </a>{' '}
-                y los{' '}
-                <a href="#" className="text-primary-600 hover:text-primary-700 font-semibold">
-                  Términos y Condiciones
-                </a>
-              </span>
-            </label>
 
             {/* Botón de envío */}
             <button
