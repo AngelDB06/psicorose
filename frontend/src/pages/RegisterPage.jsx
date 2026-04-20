@@ -11,14 +11,53 @@ function RegisterPage() {
   });
   const [showPassword, setShowPassword] = useState(false);
 
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setError(''); // Limpiar error al escribir
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: Conectar con el backend para registro
-    console.log('Registro enviado:', formData);
+    
+    if (formData.password !== formData.confirmPassword) {
+      return setError('Las contraseñas no coinciden');
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Error al registrar usuario');
+      }
+
+      // Registro exitoso: Guardar token
+      localStorage.setItem('psicorose_token', data.token);
+      localStorage.setItem('psicorose_user', JSON.stringify(data));
+      
+      // TODO: Redirigir al inicio o dashboard
+      alert('¡Registro exitoso! Ya estás conectado.');
+      window.location.href = '/'; // Redirección simple por ahora
+      
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -40,6 +79,16 @@ function RegisterPage() {
             <h1 className="text-2xl font-bold text-slate-800">Crear Cuenta</h1>
             <p className="text-slate-500 text-sm mt-2">Regístrate en PsicoRose para reservar tus citas</p>
           </div>
+
+          {/* Mensaje de error */}
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm font-semibold flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              {error}
+            </div>
+          )}
 
           {/* Formulario */}
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -186,9 +235,12 @@ function RegisterPage() {
             {/* Botón de envío */}
             <button
               type="submit"
-              className="w-full bg-primary-500 hover:bg-primary-600 text-white py-3.5 rounded-xl font-semibold transition-all shadow-lg shadow-primary-200/50 hover:shadow-primary-300 hover:-translate-y-0.5 mt-2"
+              disabled={loading}
+              className={`w-full bg-primary-500 text-white py-3.5 rounded-xl font-semibold transition-all shadow-lg shadow-primary-200/50 mt-2 ${
+                loading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-primary-600 hover:shadow-primary-300 hover:-translate-y-0.5'
+              }`}
             >
-              Crear Cuenta
+              {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
             </button>
           </form>
 
