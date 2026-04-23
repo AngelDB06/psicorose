@@ -1,4 +1,5 @@
 const Appointment = require('../models/Appointment');
+const { sendBookingConfirmation } = require('../services/emailService');
 
 // @desc    Crear nueva cita
 // @route   POST /api/appointments
@@ -38,6 +39,13 @@ exports.createAppointment = async (req, res) => {
       reason,
       notes: notes || '',
     });
+
+    // Enviar correo de confirmación (sin bloquear la respuesta si falla)
+    sendBookingConfirmation(req.user.email, req.user.name, {
+      date: selectedDate,
+      time,
+      reason,
+    }).catch((err) => console.error('⚠️  Error enviando confirmación por email:', err.message));
 
     res.status(201).json(appointment);
   } catch (error) {
