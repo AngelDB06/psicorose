@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import logoImg from '../../assets/logo.jpg';
+import { useAuth } from '../../context/AuthContext';
 
 const NAV_LINKS = [
   { to: '/', label: 'Inicio' },
@@ -11,6 +12,7 @@ const NAV_LINKS = [
 function Navbar() {
   const { pathname } = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { user, logout } = useAuth();
 
   return (
     <nav className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-primary-100">
@@ -36,21 +38,46 @@ function Navbar() {
               {label}
             </Link>
           ))}
-          <Link
-            to="/login"
-            className="text-primary-600 hover:text-primary-700 font-semibold transition-colors flex items-center gap-1.5"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-            </svg>
-            Iniciar Sesión
-          </Link>
-          <Link
-            to="/reservar"
-            className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-2.5 rounded-full transition-all shadow-sm shadow-primary-200"
-          >
-            Reservar Cita
-          </Link>
+          
+          {user ? (
+            <div className="flex items-center gap-4 ml-2 border-l border-primary-100 pl-6">
+              <Link to="/dashboard" className="text-slate-600 hover:text-primary-600 font-semibold transition-colors">
+                Mi Panel
+              </Link>
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-bold text-primary-900 bg-primary-50 px-3 py-1.5 rounded-full">
+                  {user.name.split(' ')[0]}
+                </span>
+                <button
+                  onClick={logout}
+                  className="text-slate-400 hover:text-red-500 transition-colors"
+                  title="Cerrar sesión"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="text-primary-600 hover:text-primary-700 font-semibold transition-colors flex items-center gap-1.5"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                </svg>
+                Iniciar Sesión
+              </Link>
+              <Link
+                to="/reservar"
+                className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-2.5 rounded-full transition-all shadow-sm shadow-primary-200"
+              >
+                Reservar Cita
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Botón hamburguesa móvil */}
@@ -81,23 +108,50 @@ function Navbar() {
               {label}
             </Link>
           ))}
-          <Link
-            to="/login"
-            onClick={() => setMenuOpen(false)}
-            className="py-2 text-sm font-semibold rounded-lg px-3 transition-colors text-slate-600 hover:bg-primary-50 hover:text-primary-600 flex items-center gap-2"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-            </svg>
-            Iniciar Sesión
-          </Link>
-          <Link
-            to="/reservar"
-            onClick={() => setMenuOpen(false)}
-            className="mt-2 text-center bg-primary-500 hover:bg-primary-600 text-white px-6 py-2.5 rounded-full transition-all font-semibold text-sm"
-          >
-            Reservar Cita
-          </Link>
+          
+          {user ? (
+            <div className="mt-4 pt-4 border-t border-primary-100 flex flex-col gap-2">
+              <Link
+                to="/dashboard"
+                onClick={() => setMenuOpen(false)}
+                className="py-2 text-sm font-semibold rounded-lg px-3 transition-colors text-slate-600 hover:bg-primary-50 hover:text-primary-600"
+              >
+                Mi Panel ({user.name.split(' ')[0]})
+              </Link>
+              <button
+                onClick={() => {
+                  setMenuOpen(false);
+                  logout();
+                }}
+                className="py-2 text-sm font-semibold rounded-lg px-3 text-left text-red-500 hover:bg-red-50 flex items-center gap-2"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                Cerrar Sesión
+              </button>
+            </div>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                onClick={() => setMenuOpen(false)}
+                className="py-2 text-sm font-semibold rounded-lg px-3 transition-colors text-slate-600 hover:bg-primary-50 hover:text-primary-600 flex items-center gap-2"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                </svg>
+                Iniciar Sesión
+              </Link>
+              <Link
+                to="/reservar"
+                onClick={() => setMenuOpen(false)}
+                className="mt-2 text-center bg-primary-500 hover:bg-primary-600 text-white px-6 py-2.5 rounded-full transition-all font-semibold text-sm"
+              >
+                Reservar Cita
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </nav>

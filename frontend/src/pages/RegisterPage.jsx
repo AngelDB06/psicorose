@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -13,6 +14,8 @@ function RegisterPage() {
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -45,13 +48,9 @@ function RegisterPage() {
         throw new Error(data.message || 'Error al registrar usuario');
       }
 
-      // Registro exitoso: Guardar token
-      localStorage.setItem('psicorose_token', data.token);
-      localStorage.setItem('psicorose_user', JSON.stringify(data));
-      
-      // TODO: Redirigir al inicio o dashboard
-      alert('¡Registro exitoso! Ya estás conectado.');
-      window.location.href = '/'; // Redirección simple por ahora
+      // Registro exitoso usando el Contexto
+      login(data);
+      navigate('/dashboard');
       
     } catch (err) {
       setError(err.message);

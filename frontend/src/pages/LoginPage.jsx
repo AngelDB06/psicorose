@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 function LoginPage() {
   const [email, setEmail] = useState('');
@@ -8,6 +9,8 @@ function LoginPage() {
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,13 +30,9 @@ function LoginPage() {
         throw new Error(data.message || 'Error al iniciar sesión');
       }
 
-      // Login exitoso: Guardar token
-      localStorage.setItem('psicorose_token', data.token);
-      localStorage.setItem('psicorose_user', JSON.stringify(data));
-      
-      // TODO: Redirigir al inicio o dashboard
-      alert('¡Sesión iniciada con éxito!');
-      window.location.href = '/'; // Redirección simple por ahora
+      // Login exitoso usando el Contexto
+      login(data);
+      navigate('/dashboard');
       
     } catch (err) {
       setError(err.message);
