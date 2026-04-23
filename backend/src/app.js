@@ -41,8 +41,10 @@ app.get('/api/health', (req, res) => {
 // TODO: Aquí irán las rutas de auth, posts, appointments, etc.
 const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes);
+
+const appointmentRoutes = require('./routes/appointmentRoutes');
+app.use('/api/appointments', appointmentRoutes);
 // app.use('/api/posts', postRoutes);
-// app.use('/api/appointments', appointmentRoutes);
 
 // ──────────────── Manejo de errores ────────────────
 

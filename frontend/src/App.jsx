@@ -8,6 +8,7 @@ import PostDetailPage from './pages/PostDetailPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
+import BookingPage from './pages/BookingPage';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 // Componente para proteger rutas privadas
@@ -37,6 +38,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <DashboardPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/reservar" 
+              element={
+                <ProtectedRoute>
+                  <BookingPage />
                 </ProtectedRoute>
               } 
             />
