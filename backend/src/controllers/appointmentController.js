@@ -102,3 +102,49 @@ exports.cancelAppointment = async (req, res) => {
     res.status(500).json({ message: 'Error al cancelar la cita' });
   }
 };
+
+// ──────────────── Funciones de Administrador ────────────────
+
+// @desc    Obtener todas las citas (Admin)
+// @route   GET /api/appointments
+// @access  Privado/Admin
+exports.getAllAppointments = async (req, res) => {
+  try {
+    const appointments = await Appointment.find({})
+      .populate('user', 'name email phone')
+      .sort({ date: 1, time: 1 });
+
+    res.json(appointments);
+  } catch (error) {
+    console.error('Error en getAllAppointments:', error.message);
+    res.status(500).json({ message: 'Error al obtener todas las citas' });
+  }
+};
+
+// @desc    Actualizar el estado de una cita (Admin)
+// @route   PATCH /api/appointments/:id/status
+// @access  Privado/Admin
+exports.updateAppointmentStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+
+    const validStatuses = ['pending', 'confirmed', 'cancelled', 'completed'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ message: 'Estado inválido' });
+    }
+
+    const appointment = await Appointment.findById(req.params.id);
+
+    if (!appointment) {
+      return res.status(404).json({ message: 'Cita no encontrada' });
+    }
+
+    appointment.status = status;
+    await appointment.save();
+
+    res.json({ message: 'Estado actualizado correctamente', appointment });
+  } catch (error) {
+    console.error('Error en updateAppointmentStatus:', error.message);
+    res.status(500).json({ message: 'Error al actualizar la cita' });
+  }
+};

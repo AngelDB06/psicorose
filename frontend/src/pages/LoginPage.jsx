@@ -32,8 +32,13 @@ function LoginPage() {
 
       // Login exitoso usando el Contexto
       login(data);
-      navigate('/dashboard');
       
+      // Redirigir según el rol
+      if (data.role === 'admin') {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err) {
       setError(err.message);
     } finally {

@@ -41,9 +41,15 @@ function Navbar() {
           
           {user ? (
             <div className="flex items-center gap-4 ml-2 border-l border-primary-100 pl-6">
-              <Link to="/dashboard" className="text-slate-600 hover:text-primary-600 font-semibold transition-colors">
-                Mi Panel
-              </Link>
+              {user.role === 'admin' ? (
+                <Link to="/admin/dashboard" className="text-primary-700 hover:text-primary-800 font-bold transition-colors">
+                  Panel de Dra. Rosa
+                </Link>
+              ) : (
+                <Link to="/dashboard" className="text-slate-600 hover:text-primary-600 font-semibold transition-colors">
+                  Mi Panel
+                </Link>
+              )}
               <div className="flex items-center gap-3">
                 <span className="text-sm font-bold text-primary-900 bg-primary-50 px-3 py-1.5 rounded-full">
                   {user.name.split(' ')[0]}
@@ -111,13 +117,23 @@ function Navbar() {
           
           {user ? (
             <div className="mt-4 pt-4 border-t border-primary-100 flex flex-col gap-2">
-              <Link
-                to="/dashboard"
-                onClick={() => setMenuOpen(false)}
-                className="py-2 text-sm font-semibold rounded-lg px-3 transition-colors text-slate-600 hover:bg-primary-50 hover:text-primary-600"
-              >
-                Mi Panel ({user.name.split(' ')[0]})
-              </Link>
+              {user.role === 'admin' ? (
+                <Link
+                  to="/admin/dashboard"
+                  onClick={() => setMenuOpen(false)}
+                  className="py-2 text-sm font-bold rounded-lg px-3 transition-colors text-primary-700 hover:bg-primary-50 hover:text-primary-800"
+                >
+                  Panel de Dra. Rosa
+                </Link>
+              ) : (
+                <Link
+                  to="/dashboard"
+                  onClick={() => setMenuOpen(false)}
+                  className="py-2 text-sm font-semibold rounded-lg px-3 transition-colors text-slate-600 hover:bg-primary-50 hover:text-primary-600"
+                >
+                  Mi Panel ({user.name.split(' ')[0]})
+                </Link>
+              )}
               <button
                 onClick={() => {
                   setMenuOpen(false);

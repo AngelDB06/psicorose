@@ -9,6 +9,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import BookingPage from './pages/BookingPage';
+import AdminDashboardPage from './pages/AdminDashboardPage';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 // Componente para proteger rutas privadas
@@ -16,6 +17,15 @@ const ProtectedRoute = ({ children }) => {
   const { user } = useAuth();
   if (!user) {
     return <Navigate to="/login" replace />;
+  }
+  return children;
+};
+
+// Componente para proteger rutas de administrador
+const AdminRoute = ({ children }) => {
+  const { user } = useAuth();
+  if (!user || user.role !== 'admin') {
+    return <Navigate to="/" replace />;
   }
   return children;
 };
@@ -47,6 +57,14 @@ function App() {
                 <ProtectedRoute>
                   <BookingPage />
                 </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin/dashboard" 
+              element={
+                <AdminRoute>
+                  <AdminDashboardPage />
+                </AdminRoute>
               } 
             />
           </Routes>
