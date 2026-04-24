@@ -1,56 +1,59 @@
 const cron = require('node-cron');
 const Appointment = require('../models/Appointment');
-const User = require('../models/User');
 const { sendReminder } = require('../services/emailService');
 
 /**
- * Tarea que se ejecuta cada hora.
- * Busca citas que sean exactamente en 24 horas (+/- 30 min de margen)
- * y envía un correo de recordatorio al paciente.
+ * Tarea que se ejecuta todos los días a las 10:00h.
+ * Busca todas las citas del día siguiente y envía un recordatorio
+ * a cada paciente.
  */
 const startReminderJob = () => {
-  // Se ejecuta cada hora en punto (ej: 16:00, 17:00, 18:00...)
-  cron.schedule('0 * * * *', async () => {
-    console.log('⏰ Comprobando citas para recordatorios 24h...');
+  // Se ejecuta cada día a las 10:00 AM
+  cron.schedule('0 10 * * *', async () => {
+    console.log('⏰ [Cron] Enviando recordatorios de citas para mañana...');
 
     try {
-      const now = new Date();
+      // Calcular el rango de "mañana" (de 00:00:00 a 23:59:59 UTC)
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
 
-      // Ventana de búsqueda: entre 23h30 y 24h30 desde ahora
-      const windowStart = new Date(now.getTime() + 23.5 * 60 * 60 * 1000);
-      const windowEnd   = new Date(now.getTime() + 24.5 * 60 * 60 * 1000);
+      const dayAfterTomorrow = new Date(tomorrow);
+      dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 1);
 
-      // Buscar citas activas dentro de esa ventana temporal
+      // Buscar todas las citas activas para mañana
       const appointments = await Appointment.find({
         status: { $in: ['pending', 'confirmed'] },
-        date: { $gte: windowStart, $lte: windowEnd },
+        date: { $gte: tomorrow, $lt: dayAfterTomorrow },
       }).populate('user', 'name email');
 
       if (appointments.length === 0) {
-        console.log('   → No hay citas próximas en las siguientes 24h.');
+        console.log('   → No hay citas programadas para mañana.');
         return;
       }
 
-      for (const appt of appointments) {
-        // Verificar que la hora de la cita coincide con la hora actual + 24h
-        const [apptHour] = appt.time.split(':').map(Number);
-        const targetHour = new Date(windowStart).getHours();
+      console.log(`   → Enviando ${appointments.length} recordatorio(s)...`);
 
-        // Solo enviamos si la hora de la cita coincide con la franja horaria actual
-        if (Math.abs(apptHour - targetHour) <= 1) {
+      for (const appt of appointments) {
+        try {
           await sendReminder(appt.user.email, appt.user.name, {
             date: appt.date,
             time: appt.time,
             reason: appt.reason,
           });
+        } catch (emailErr) {
+          console.error(`   ⚠️ Error enviando recordatorio a ${appt.user.email}:`, emailErr.message);
         }
       }
+
+      console.log('   ✅ Recordatorios enviados correctamente.');
     } catch (error) {
-      console.error('❌ Error en el cron job de recordatorios:', error.message);
+      console.error('❌ [Cron] Error en el job de recordatorios:', error.message);
     }
   });
 
-  console.log('🕐 Cron job de recordatorios iniciado (cada hora).');
+  console.log('🕐 Cron job de recordatorios iniciado (cada día a las 10:00h).');
 };
 
 module.exports = { startReminderJob };
+
