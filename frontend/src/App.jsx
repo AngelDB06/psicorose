@@ -11,6 +11,7 @@ import DashboardPage from './pages/DashboardPage';
 import BookingPage from './pages/BookingPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import AdminBlogPage from './pages/AdminBlogPage';
+import FloatingChat from './components/chat/FloatingChat';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 // Componente para proteger rutas privadas
@@ -77,6 +78,7 @@ function App() {
               } 
             />
           </Routes>
+          <FloatingChat />
         </div>
       </BrowserRouter>
     </AuthProvider>

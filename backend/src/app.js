@@ -48,6 +48,10 @@ app.use('/api/appointments', appointmentRoutes);
 const postRoutes = require('./routes/postRoutes');
 app.use('/api/posts', postRoutes);
 
+const chatRoutes = require('./routes/chatRoutes');
+app.use('/api/chat', chatRoutes);
+
+
 // ──────────────── Manejo de errores ────────────────
 
 // Ruta no encontrada (404)
