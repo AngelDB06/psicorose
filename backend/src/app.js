@@ -44,7 +44,9 @@ app.use('/api/auth', authRoutes);
 
 const appointmentRoutes = require('./routes/appointmentRoutes');
 app.use('/api/appointments', appointmentRoutes);
-// app.use('/api/posts', postRoutes);
+
+const postRoutes = require('./routes/postRoutes');
+app.use('/api/posts', postRoutes);
 
 // ──────────────── Manejo de errores ────────────────
 

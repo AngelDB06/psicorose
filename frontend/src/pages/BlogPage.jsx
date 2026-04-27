@@ -1,17 +1,35 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PostCard from '../components/common/PostCard';
-import MOCK_POSTS from '../data/mockPosts';
-
-const CATEGORIES = ['Todos', ...new Set(MOCK_POSTS.map((p) => p.category))];
 
 function BlogPage() {
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [activeCategory, setActiveCategory] = useState('Todos');
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/posts');
+        if (!response.ok) throw new Error('Error al cargar los artículos');
+        const data = await response.json();
+        setPosts(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
+  const categories = ['Todos', ...new Set(posts.map((p) => p.category))];
 
   const filteredPosts =
     activeCategory === 'Todos'
-      ? MOCK_POSTS
-      : MOCK_POSTS.filter((p) => p.category === activeCategory);
+      ? posts
+      : posts.filter((p) => p.category === activeCategory);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -31,27 +49,39 @@ function BlogPage() {
       </section>
 
       {/* Filtro de categorías */}
-      <div className="max-w-7xl mx-auto px-6 -mt-5">
-        <div className="bg-white rounded-2xl shadow-md border border-primary-50 p-2 flex flex-wrap gap-2 justify-center">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                activeCategory === cat
-                  ? 'bg-primary-500 text-white shadow-sm'
-                  : 'text-slate-500 hover:bg-primary-50 hover:text-primary-600'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
+      {!loading && !error && posts.length > 0 && (
+        <div className="max-w-7xl mx-auto px-6 -mt-5">
+          <div className="bg-white rounded-2xl shadow-md border border-primary-50 p-2 flex flex-wrap gap-2 justify-center">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                  activeCategory === cat
+                    ? 'bg-primary-500 text-white shadow-sm'
+                    : 'text-slate-500 hover:bg-primary-50 hover:text-primary-600'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Grid de posts */}
       <section className="max-w-7xl mx-auto px-6 py-12">
-        {filteredPosts.length > 0 ? (
+        {loading ? (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[1, 2, 3].map((n) => (
+              <div key={n} className="bg-white rounded-3xl p-4 h-80 animate-pulse border border-slate-100" />
+            ))}
+          </div>
+        ) : error ? (
+          <div className="text-center py-20">
+            <p className="text-red-500 text-lg">{error}</p>
+          </div>
+        ) : filteredPosts.length > 0 ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredPosts.map((post) => (
               <PostCard key={post.slug} {...post} />
@@ -59,7 +89,7 @@ function BlogPage() {
           </div>
         ) : (
           <div className="text-center py-20">
-            <p className="text-slate-400 text-lg">No hay artículos en esta categoría todavía.</p>
+            <p className="text-slate-400 text-lg">No hay artículos publicados todavía.</p>
           </div>
         )}
       </section>

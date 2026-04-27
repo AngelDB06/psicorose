@@ -10,6 +10,7 @@ import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import BookingPage from './pages/BookingPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
+import AdminBlogPage from './pages/AdminBlogPage';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 // Componente para proteger rutas privadas
@@ -64,6 +65,14 @@ function App() {
               element={
                 <AdminRoute>
                   <AdminDashboardPage />
+                </AdminRoute>
+              } 
+            />
+            <Route 
+              path="/admin/blog" 
+              element={
+                <AdminRoute>
+                  <AdminBlogPage />
                 </AdminRoute>
               } 
             />

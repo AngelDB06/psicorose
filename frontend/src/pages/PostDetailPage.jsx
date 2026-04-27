@@ -1,18 +1,43 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import MOCK_POSTS from '../data/mockPosts';
 
 function PostDetailPage() {
   const { slug } = useParams();
-  const post = MOCK_POSTS.find((p) => p.slug === slug);
+  const [post, setPost] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  // Post no encontrado
-  if (!post) {
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/posts/${slug}`);
+        if (!response.ok) throw new Error('Artículo no encontrado');
+        const data = await response.json();
+        setPost(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPost();
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+      </div>
+    );
+  }
+
+  if (error || !post) {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center px-6 text-center">
         <span className="text-6xl mb-6">🔍</span>
         <h1 className="text-3xl font-bold text-slate-800 mb-3">Artículo no encontrado</h1>
-        <p className="text-slate-500 mb-8">El artículo que buscas no existe o ha sido eliminado.</p>
+        <p className="text-slate-500 mb-8">{error || 'El artículo que buscas no existe o ha sido eliminado.'}</p>
         <Link
           to="/blog"
           className="bg-primary-500 hover:bg-primary-600 text-white px-8 py-3 rounded-full font-semibold transition-all"
@@ -23,17 +48,12 @@ function PostDetailPage() {
     );
   }
 
-  // Artículos relacionados (misma categoría, excluyendo el actual)
-  const relatedPosts = MOCK_POSTS.filter(
-    (p) => p.category === post.category && p.slug !== post.slug
-  ).slice(0, 2);
-
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Imagen de cabecera */}
       <div className="relative h-72 md:h-96 overflow-hidden">
         <img
-          src={post.image}
+          src={post.image || 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=1200'}
           alt={post.title}
           className="w-full h-full object-cover"
         />
@@ -60,7 +80,7 @@ function PostDetailPage() {
             <span className="font-semibold text-slate-700">Dra. Rosa Mª Barranco</span>
           </div>
           <span className="w-1 h-1 rounded-full bg-slate-300" />
-          <span>{post.date}</span>
+          <span>{new Date(post.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
           <span className="w-1 h-1 rounded-full bg-slate-300" />
           <span>{post.readTime} min de lectura</span>
         </div>
@@ -95,37 +115,6 @@ function PostDetailPage() {
           </Link>
         </div>
       </article>
-
-      {/* Artículos relacionados */}
-      {relatedPosts.length > 0 && (
-        <section className="bg-white border-t border-primary-50 py-14 px-6">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-2xl font-bold text-primary-900 mb-8">Artículos relacionados</h2>
-            <div className="grid sm:grid-cols-2 gap-6">
-              {relatedPosts.map((related) => (
-                <Link
-                  key={related.slug}
-                  to={`/blog/${related.slug}`}
-                  className="flex gap-4 p-4 rounded-2xl border border-primary-50 hover:bg-primary-50/50 transition-colors group"
-                >
-                  <img
-                    src={related.image}
-                    alt={related.title}
-                    className="w-24 h-24 rounded-xl object-cover flex-shrink-0"
-                  />
-                  <div className="flex flex-col justify-center">
-                    <span className="text-xs text-primary-500 font-bold mb-1">{related.category}</span>
-                    <h3 className="font-bold text-slate-800 group-hover:text-primary-600 transition-colors leading-snug">
-                      {related.title}
-                    </h3>
-                    <span className="text-xs text-slate-400 mt-1">{related.readTime} min</span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* Botón volver */}
       <div className="max-w-4xl mx-auto px-6 py-8">

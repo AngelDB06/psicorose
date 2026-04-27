@@ -98,12 +98,12 @@ function AdminDashboardPage() {
           <div className="md:col-span-1 space-y-4">
             <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
               <nav className="space-y-2">
-                <button className="w-full text-left px-4 py-3 bg-primary-50 text-primary-700 rounded-xl font-bold flex items-center gap-3">
+                <Link to="/admin/dashboard" className="w-full text-left px-4 py-3 bg-primary-50 text-primary-700 rounded-xl font-bold flex items-center gap-3">
                   <span>📅</span> Gestión de Citas
-                </button>
-                <button className="w-full text-left px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-xl font-semibold flex items-center gap-3 transition-colors opacity-50 cursor-not-allowed" title="Próximamente">
-                  <span>📝</span> Blog (Pronto)
-                </button>
+                </Link>
+                <Link to="/admin/blog" className="w-full text-left px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-xl font-semibold flex items-center gap-3 transition-colors">
+                  <span>📝</span> Gestión del Blog
+                </Link>
               </nav>
             </div>
           </div>
