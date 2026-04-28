@@ -45,6 +45,9 @@ app.use('/api/auth', authRoutes);
 const appointmentRoutes = require('./routes/appointmentRoutes');
 app.use('/api/appointments', appointmentRoutes);
 
+const reviewRoutes = require('./routes/reviewRoutes');
+app.use('/api/reviews', reviewRoutes);
+
 const postRoutes = require('./routes/postRoutes');
 app.use('/api/posts', postRoutes);
 

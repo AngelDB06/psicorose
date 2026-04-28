@@ -9,6 +9,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import BookingPage from './pages/BookingPage';
+import ReviewsPage from './pages/ReviewsPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import AdminBlogPage from './pages/AdminBlogPage';
 import FloatingChat from './components/chat/FloatingChat';
@@ -41,6 +42,7 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/sobre-rosa" element={<AboutPage />} />
+            <Route path="/opiniones" element={<ReviewsPage />} />
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/blog/:slug" element={<PostDetailPage />} />
             <Route path="/login" element={<LoginPage />} />

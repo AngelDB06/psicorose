@@ -6,6 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 const NAV_LINKS = [
   { to: '/', label: 'Inicio' },
   { to: '/sobre-rosa', label: 'Sobre la Dra. Rosa' },
+  { to: '/opiniones', label: 'Opiniones' },
   { to: '/blog', label: 'Blog' },
 ];
 
