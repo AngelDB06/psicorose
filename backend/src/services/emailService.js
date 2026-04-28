@@ -73,7 +73,7 @@ const baseTemplate = (content) => `
 </html>
 `;
 
-// ──────────────── Correo de confirmación de cita ────────────────
+// ──────────────── Correo de registro de cita (Pendiente) ────────────────
 const sendBookingConfirmation = async (userEmail, userName, appointment) => {
   const { date, time, reason } = appointment;
   const greeting = getGreeting(time);
@@ -85,7 +85,7 @@ const sendBookingConfirmation = async (userEmail, userName, appointment) => {
       ${greeting}, ${firstName} 👋
     </h2>
     <p style="margin:0 0 24px;color:#7a5a6a;font-size:15px;line-height:1.7;">
-      Tu cita ha quedado registrada correctamente. Aquí tienes todos los detalles:
+      Hemos recibido tu solicitud de cita. Ahora mismo está <strong>pendiente de confirmación</strong> por parte de la Dra. Rosa.
     </p>
 
     <!-- Tarjeta de cita -->
@@ -125,8 +125,7 @@ const sendBookingConfirmation = async (userEmail, userName, appointment) => {
     </div>
 
     <p style="margin:0 0 20px;color:#7a5a6a;font-size:15px;line-height:1.7;">
-      Te enviaremos un recordatorio <strong>24 horas antes</strong> de tu cita para que no se te olvide. 
-      Si necesitas cancelarla o cambiarla, puedes hacerlo desde tu panel personal.
+      Te enviaremos otro correo en cuanto la Dra. Rosa confirme la disponibilidad.
     </p>
 
     <div style="text-align:center;margin-top:28px;">
@@ -140,11 +139,84 @@ const sendBookingConfirmation = async (userEmail, userName, appointment) => {
   await transporter.sendMail({
     from: process.env.EMAIL_FROM,
     to: userEmail,
-    subject: `✅ Cita confirmada para el ${formattedDate} a las ${time}h – PsicoRose`,
+    subject: `⏳ Cita pendiente de confirmación – PsicoRose`,
     html: baseTemplate(content),
   });
 
-  console.log(`📧 Correo de confirmación enviado a ${userEmail}`);
+  console.log(`📧 Correo de cita pendiente enviado a ${userEmail}`);
+};
+
+// ──────────────── Correo de confirmación de cita (Confirmada) ────────────────
+const sendAppointmentConfirmed = async (userEmail, userName, appointment) => {
+  const { date, time, reason } = appointment;
+  const greeting = getGreeting(time);
+  const firstName = userName.split(' ')[0];
+  const formattedDate = formatDate(date);
+
+  const content = `
+    <h2 style="margin:0 0 8px;color:#3d1a29;font-size:22px;font-weight:700;">
+      ¡Cita confirmada! 🌹
+    </h2>
+    <p style="margin:0 0 24px;color:#7a5a6a;font-size:15px;line-height:1.7;">
+      ${greeting}, ${firstName}. La Dra. Rosa ha <strong>confirmado tu cita</strong>. Te esperamos en la consulta:
+    </p>
+
+    <!-- Tarjeta de cita -->
+    <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1px solid #bbf7d0;border-radius:12px;padding:24px;margin-bottom:28px;">
+      <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td style="padding:8px 0;">
+            <span style="display:inline-block;width:28px;font-size:16px;">📋</span>
+            <strong style="color:#166534;font-size:14px;">Tipo de consulta:</strong>
+          </td>
+          <td style="padding:8px 0;color:#14532d;font-weight:600;font-size:14px;text-align:right;">${reason}</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 0;border-top:1px solid #bbf7d0;">
+            <span style="display:inline-block;width:28px;font-size:16px;">📅</span>
+            <strong style="color:#166534;font-size:14px;">Fecha:</strong>
+          </td>
+          <td style="padding:8px 0;border-top:1px solid #bbf7d0;color:#14532d;font-weight:600;font-size:14px;text-align:right;text-transform:capitalize;">${formattedDate}</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 0;border-top:1px solid #bbf7d0;">
+            <span style="display:inline-block;width:28px;font-size:16px;">🕐</span>
+            <strong style="color:#166534;font-size:14px;">Hora:</strong>
+          </td>
+          <td style="padding:8px 0;border-top:1px solid #bbf7d0;color:#14532d;font-weight:600;font-size:14px;text-align:right;">${time}h</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 0;border-top:1px solid #bbf7d0;">
+            <span style="display:inline-block;width:28px;font-size:16px;">📍</span>
+            <strong style="color:#166534;font-size:14px;">Estado:</strong>
+          </td>
+          <td style="padding:8px 0;border-top:1px solid #bbf7d0;text-align:right;">
+            <span style="background:#22c55e;color:#ffffff;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700;">Confirmada</span>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <p style="margin:0 0 20px;color:#7a5a6a;font-size:15px;line-height:1.7;">
+      Recuerda que si no puedes asistir, debes avisar con al menos 24 horas de antelación.
+    </p>
+
+    <div style="text-align:center;margin-top:28px;">
+      <a href="${process.env.CLIENT_URL}/dashboard" 
+         style="display:inline-block;background:linear-gradient(135deg,#be5d87,#9c3d65);color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:50px;font-weight:700;font-size:15px;letter-spacing:0.3px;">
+        Ver en mi panel &rarr;
+      </a>
+    </div>
+  `;
+
+  await transporter.sendMail({
+    from: process.env.EMAIL_FROM,
+    to: userEmail,
+    subject: `✅ Cita CONFIRMADA para el ${formattedDate} – PsicoRose`,
+    html: baseTemplate(content),
+  });
+
+  console.log(`📧 Correo de confirmación definitiva enviado a ${userEmail}`);
 };
 
 // ──────────────── Correo de recordatorio 24h ────────────────
@@ -213,4 +285,43 @@ const sendReminder = async (userEmail, userName, appointment) => {
   console.log(`📧 Recordatorio enviado a ${userEmail}`);
 };
 
-module.exports = { sendBookingConfirmation, sendReminder };
+// ──────────────── Correo de cancelación de cita ────────────────
+const sendAppointmentCancelled = async (userEmail, userName, appointment) => {
+  const { date, time, reason } = appointment;
+  const firstName = userName.split(' ')[0];
+  const formattedDate = formatDate(date);
+
+  const content = `
+    <h2 style="margin:0 0 8px;color:#3d1a29;font-size:22px;font-weight:700;">
+      Cita cancelada ❌
+    </h2>
+    <p style="margin:0 0 24px;color:#7a5a6a;font-size:15px;line-height:1.7;">
+      Hola, ${firstName}. Te informamos de que tu cita para el <strong>${formattedDate}</strong> a las <strong>${time}h</strong> ha sido cancelada.
+    </p>
+
+    <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:24px;margin-bottom:28px;">
+      <p style="margin:0;color:#991b1b;font-size:14px;line-height:1.6;">
+        Si no has sido tú quien ha solicitado la cancelación, es posible que la Dra. Rosa haya tenido un imprevisto. 
+        Puedes intentar reservar en otro horario o ponerte en contacto con nosotros.
+      </p>
+    </div>
+
+    <div style="text-align:center;margin-top:28px;">
+      <a href="${process.env.CLIENT_URL}/dashboard" 
+         style="display:inline-block;background:#3d1a29;color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:50px;font-weight:700;font-size:15px;">
+        Ver otros horarios &rarr;
+      </a>
+    </div>
+  `;
+
+  await transporter.sendMail({
+    from: process.env.EMAIL_FROM,
+    to: userEmail,
+    subject: `❌ Cita CANCELADA – PsicoRose`,
+    html: baseTemplate(content),
+  });
+
+  console.log(`📧 Correo de cancelación enviado a ${userEmail}`);
+};
+
+module.exports = { sendBookingConfirmation, sendAppointmentConfirmed, sendAppointmentCancelled, sendReminder };

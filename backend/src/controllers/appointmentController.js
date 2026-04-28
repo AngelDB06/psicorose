@@ -1,5 +1,5 @@
 const Appointment = require('../models/Appointment');
-const { sendBookingConfirmation } = require('../services/emailService');
+const { sendBookingConfirmation, sendAppointmentConfirmed, sendAppointmentCancelled } = require('../services/emailService');
 
 // @desc    Crear nueva cita
 // @route   POST /api/appointments
@@ -133,14 +133,33 @@ exports.updateAppointmentStatus = async (req, res) => {
       return res.status(400).json({ message: 'Estado inválido' });
     }
 
-    const appointment = await Appointment.findById(req.params.id);
+    const appointment = await Appointment.findById(req.params.id).populate('user', 'name email');
 
     if (!appointment) {
       return res.status(404).json({ message: 'Cita no encontrada' });
     }
 
+    const oldStatus = appointment.status;
     appointment.status = status;
     await appointment.save();
+
+    // Si el estado cambia a confirmado, enviar email al usuario
+    if (status === 'confirmed' && oldStatus !== 'confirmed') {
+      sendAppointmentConfirmed(appointment.user.email, appointment.user.name, {
+        date: appointment.date,
+        time: appointment.time,
+        reason: appointment.reason,
+      }).catch((err) => console.error('⚠️ Error enviando confirmación definitiva:', err.message));
+    }
+
+    // Si el estado cambia a cancelado, enviar email al usuario
+    if (status === 'cancelled' && oldStatus !== 'cancelled') {
+      sendAppointmentCancelled(appointment.user.email, appointment.user.name, {
+        date: appointment.date,
+        time: appointment.time,
+        reason: appointment.reason,
+      }).catch((err) => console.error('⚠️ Error enviando notificación de cancelación:', err.message));
+    }
 
     res.json({ message: 'Estado actualizado correctamente', appointment });
   } catch (error) {
