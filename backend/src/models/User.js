@@ -35,6 +35,10 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    avatar: {
+      type: String,
+      default: '', // URL o ruta de la imagen
+    },
   },
   {
     timestamps: true, // createdAt y updatedAt automáticos

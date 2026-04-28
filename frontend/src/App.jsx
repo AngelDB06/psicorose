@@ -10,6 +10,7 @@ import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import BookingPage from './pages/BookingPage';
 import ReviewsPage from './pages/ReviewsPage';
+import ProfilePage from './pages/ProfilePage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import AdminBlogPage from './pages/AdminBlogPage';
 import FloatingChat from './components/chat/FloatingChat';
@@ -52,6 +53,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <DashboardPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/perfil" 
+              element={
+                <ProtectedRoute>
+                  <ProfilePage />
                 </ProtectedRoute>
               } 
             />

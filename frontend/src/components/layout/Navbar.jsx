@@ -52,9 +52,18 @@ function Navbar() {
                 </Link>
               )}
               <div className="flex items-center gap-3">
-                <span className="text-sm font-bold text-primary-900 bg-primary-50 px-3 py-1.5 rounded-full">
-                  {user.name.split(' ')[0]}
-                </span>
+                <Link to="/perfil" className="flex items-center gap-3 group">
+                  <span className="hidden lg:block text-sm font-bold text-primary-900 bg-primary-50 px-3 py-1.5 rounded-full group-hover:bg-primary-100 transition-colors">
+                    {user.name.split(' ')[0]}
+                  </span>
+                  <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-200 group-hover:border-primary-400 transition-all shadow-sm bg-primary-50 flex items-center justify-center">
+                    {user.avatar ? (
+                      <img src={`http://localhost:5000${user.avatar}`} alt="Avatar" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-primary-600 font-bold text-sm">{user.name.charAt(0).toUpperCase()}</span>
+                    )}
+                  </div>
+                </Link>
                 <button
                   onClick={logout}
                   className="text-slate-400 hover:text-red-500 transition-colors"

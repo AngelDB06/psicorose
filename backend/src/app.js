@@ -2,8 +2,12 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
+const path = require('path');
 
 const app = express();
+
+// Servir archivos estáticos (avatars, imágenes de blog, etc.)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // ──────────────── Middlewares globales ────────────────
 

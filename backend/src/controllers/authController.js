@@ -35,6 +35,8 @@ exports.register = async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        phone: user.phone,
+        avatar: user.avatar,
         role: user.role,
         token: generateToken(user._id),
       });
@@ -68,11 +70,13 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: 'Email o contraseña incorrectos' });
     }
 
-    // Generar respuesta
+    // Generar respuesta con todos los datos necesarios
     res.json({
       _id: user._id,
       name: user.name,
       email: user.email,
+      phone: user.phone,
+      avatar: user.avatar,
       role: user.role,
       token: generateToken(user._id),
     });
@@ -84,13 +88,52 @@ exports.login = async (req, res) => {
 
 // @desc    Obtener perfil del usuario actual
 // @route   GET /api/auth/me
-// @access  Privado (requerirá middleware de token)
+// @access  Privado
 exports.getMe = async (req, res) => {
   try {
-    // Aquí el middleware ya nos habrá puesto el ID del usuario en req.user
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user._id);
     res.json(user);
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener el perfil' });
+  }
+};
+
+// @desc    Actualizar perfil del usuario
+// @route   PATCH /api/auth/update-profile
+// @access  Privado
+exports.updateProfile = async (req, res) => {
+  try {
+    const { name, email, phone } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    // Actualizar campos básicos
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (phone) user.phone = phone;
+
+    // Si hay un archivo subido (avatar)
+    if (req.file) {
+      // Guardamos la ruta relativa que se servirá estáticamente
+      user.avatar = `/uploads/avatars/${req.file.filename}`;
+    }
+
+    await user.save();
+
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      avatar: user.avatar,
+      role: user.role,
+      message: 'Perfil actualizado correctamente'
+    });
+  } catch (error) {
+    console.error('Error en updateProfile:', error.message);
+    res.status(500).json({ message: 'Error al actualizar el perfil' });
   }
 };

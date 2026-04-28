@@ -13,7 +13,6 @@ export const AuthProvider = ({ children }) => {
     const storedUser = localStorage.getItem('psicorose_user');
     return storedUser ? JSON.parse(storedUser) : null;
   });
-  const [loading, setLoading] = useState(false);
 
   // Función para iniciar sesión (actualiza el estado y localStorage)
   const login = (userData) => {
@@ -30,17 +29,26 @@ export const AuthProvider = ({ children }) => {
     window.location.href = '/login';
   };
 
+  // Función para actualizar los datos del usuario en tiempo real
+  const updateUser = (updatedData) => {
+    // Mantener el token actual si no viene en los nuevos datos
+    const newUser = { ...user, ...updatedData };
+    setUser(newUser);
+    localStorage.setItem('psicorose_user', JSON.stringify(newUser));
+  };
+
   // El valor que estará disponible en toda la aplicación
   const value = {
     user,
     login,
     logout,
+    updateUser,
     isAuthenticated: !!user,
   };
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };
