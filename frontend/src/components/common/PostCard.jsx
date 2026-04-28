@@ -5,11 +5,15 @@ function PostCard({ slug, image, category, title, excerpt, date, readTime }) {
   return (
     <article className="bg-white rounded-2xl overflow-hidden border border-primary-50 shadow-sm hover:shadow-lg transition-shadow duration-300 group flex flex-col">
       {/* Imagen del post */}
-      <div className="relative overflow-hidden h-52">
+      <div className="relative overflow-hidden h-52 bg-slate-100">
         <img
-          src={image}
+          src={image.startsWith('http') ? image : `http://localhost:5000${image}`}
           alt={title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=1200'; // Imagen de fallback
+          }}
         />
         <span className="absolute top-4 left-4 bg-primary-500/90 text-white text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm">
           {category}

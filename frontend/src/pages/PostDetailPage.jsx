@@ -51,11 +51,15 @@ function PostDetailPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Imagen de cabecera */}
-      <div className="relative h-72 md:h-96 overflow-hidden">
+      <div className="relative h-72 md:h-96 overflow-hidden bg-slate-200">
         <img
-          src={post.image || 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=1200'}
+          src={post.image?.startsWith('http') ? post.image : (post.image ? `http://localhost:5000${post.image}` : 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=1200')}
           alt={post.title}
           className="w-full h-full object-cover"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=1200';
+          }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent" />
 

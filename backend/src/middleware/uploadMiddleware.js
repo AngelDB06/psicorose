@@ -1,15 +1,16 @@
 const multer = require('multer');
 const path = require('path');
 
-// Configuración de almacenamiento
+// Configuración de almacenamiento dinámica
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'src/uploads/avatars');
+    // Si el campo es 'avatar', va a avatars. Si no, a posts.
+    const folder = file.fieldname === 'avatar' ? 'avatars' : 'posts';
+    cb(null, `src/uploads/${folder}`);
   },
   filename: (req, file, cb) => {
-    // Nombre único: idUsuario-timestamp.ext
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, `avatar-${req.user._id}-${uniqueSuffix}${path.extname(file.originalname)}`);
+    cb(null, `${file.fieldname}-${uniqueSuffix}${path.extname(file.originalname)}`);
   },
 });
 
@@ -25,7 +26,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 2 * 1024 * 1024 }, // Límite de 2MB
+  limits: { fileSize: 5 * 1024 * 1024 }, // Límite de 5MB para posts
 });
 
 module.exports = upload;

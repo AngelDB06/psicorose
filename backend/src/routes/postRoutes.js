@@ -12,9 +12,11 @@ router.get('/:slug', postController.getPostBySlug);
 router.use(authMiddleware);
 router.use(adminMiddleware);
 
+const upload = require('../middleware/uploadMiddleware');
+
 router.get('/admin/all', postController.getAdminPosts);
-router.post('/', postController.createPost);
-router.patch('/:id', postController.updatePost);
+router.post('/', upload.single('image'), postController.createPost);
+router.patch('/:id', upload.single('image'), postController.updatePost);
 router.delete('/:id', postController.deletePost);
 
 module.exports = router;

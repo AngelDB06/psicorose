@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
 
 function AdminBlogPage() {
-  const { user } = useAuth();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -10,6 +8,8 @@ function AdminBlogPage() {
   // Estados para el formulario
   const [isEditing, setIsEditing] = useState(false);
   const [currentPost, setCurrentPost] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState('');
   const [formData, setFormData] = useState({
     title: '',
     category: '',
@@ -24,7 +24,6 @@ function AdminBlogPage() {
     try {
       setLoading(true);
       const token = localStorage.getItem('psicorose_token');
-      // Obtener TODOS los posts (incluyendo borradores)
       const response = await fetch('http://localhost:5000/api/posts/admin/all', {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -50,8 +49,22 @@ function AdminBlogPage() {
     });
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const openCreateForm = () => {
     setCurrentPost(null);
+    setImageFile(null);
+    setImagePreview('');
     setFormData({
       title: '',
       category: '',
@@ -66,13 +79,14 @@ function AdminBlogPage() {
 
   const openEditForm = (post) => {
     setCurrentPost(post);
+    setImageFile(null);
+    setImagePreview(post.image ? `http://localhost:5000${post.image}` : '');
     setFormData({
       title: post.title,
       category: post.category,
       image: post.image,
       readTime: post.readTime,
       excerpt: post.excerpt,
-      // Unir los párrafos con saltos de línea dobles para el textarea
       content: post.content.join('\n\n'),
       published: post.published,
     });
@@ -84,11 +98,25 @@ function AdminBlogPage() {
     try {
       const token = localStorage.getItem('psicorose_token');
       
-      // Preparar los datos: dividir el contenido en párrafos
-      const postData = {
-        ...formData,
-        content: formData.content.split('\n\n').filter(p => p.trim() !== ''),
-      };
+      const data = new FormData();
+      data.append('title', formData.title);
+      data.append('category', formData.category);
+      data.append('readTime', formData.readTime);
+      data.append('excerpt', formData.excerpt);
+      data.append('published', formData.published);
+      
+      // Contenido como JSON string para que el backend lo parsee si es necesario, 
+      // o simplemente enviar los párrafos uno a uno si el backend lo espera así.
+      // Pero el backend espera un array en req.body.content.
+      // Multer no parsea arrays automáticamente en FormData.
+      // Así que enviamos el texto plano y dejamos que el backend lo divida (ya lo hace en createPost)
+      data.append('content', formData.content);
+
+      if (imageFile) {
+        data.append('image', imageFile);
+      } else if (formData.image) {
+        data.append('image', formData.image);
+      }
 
       const url = currentPost 
         ? `http://localhost:5000/api/posts/${currentPost._id}`
@@ -99,10 +127,9 @@ function AdminBlogPage() {
       const response = await fetch(url, {
         method,
         headers: { 
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}` 
         },
-        body: JSON.stringify(postData),
+        body: data,
       });
 
       if (!response.ok) {
@@ -182,15 +209,31 @@ function AdminBlogPage() {
 
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">URL de la Imagen</label>
-                  <input
-                    type="url"
-                    name="image"
-                    value={formData.image}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-400"
-                    placeholder="https://ejemplo.com/imagen.jpg"
-                  />
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Imagen del artículo</label>
+                  <div className="flex items-start gap-4">
+                    <div className="flex-grow">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-400 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100"
+                      />
+                      <p className="text-[10px] text-slate-400 mt-1 italic">También puedes pegar una URL si lo prefieres abajo (opcional)</p>
+                      <input
+                        type="text"
+                        name="image"
+                        value={formData.image}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-1 mt-2 rounded-lg border border-slate-100 text-xs focus:outline-none"
+                        placeholder="URL de imagen alternativa..."
+                      />
+                    </div>
+                    {imagePreview && (
+                      <div className="w-24 h-24 rounded-xl overflow-hidden border border-slate-200 flex-shrink-0 bg-slate-50">
+                        <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">Tiempo de lectura (minutos)</label>

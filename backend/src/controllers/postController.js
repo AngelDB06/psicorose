@@ -64,7 +64,7 @@ exports.createPost = async (req, res) => {
       excerpt,
       content,
       category,
-      image,
+      image: req.file ? `/uploads/posts/${req.file.filename}` : image,
       readTime,
       published: published !== undefined ? published : true,
       author: req.user._id,
@@ -86,6 +86,11 @@ exports.updatePost = async (req, res) => {
 
     if (!post) {
       return res.status(404).json({ message: 'Artículo no encontrado' });
+    }
+
+    // Si hay una nueva imagen subida
+    if (req.file) {
+      req.body.image = `/uploads/posts/${req.file.filename}`;
     }
 
     // Actualizar campos
