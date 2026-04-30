@@ -1,31 +1,33 @@
 import React from 'react';
 import heroImg from '../../assets/hero_office.jpg';
+import { useTranslation } from 'react-i18next';
 
 function HeroSection() {
+  const { t } = useTranslation();
+
   return (
     <section className="relative px-6 py-16 md:py-24 max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12 overflow-hidden">
       {/* Columna Texto */}
       <div className="flex-1 space-y-6 z-10">
         <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary-50 text-primary-700 text-sm font-semibold rounded-full border border-primary-100">
           <span className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></span>
-          Orientación Psicológica Profesional
+          {t('home.hero_tag')}
         </span>
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-slate-800">
-          Un espacio seguro para tu{' '}
+          {t('home.hero_title_1')}{' '}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-primary-600">
-            bienestar emocional
+            {t('home.hero_title_2')}
           </span>
         </h1>
         <p className="text-lg md:text-xl text-slate-600 leading-relaxed md:max-w-xl">
-          Da el primer paso hacia una vida más plena y consciente. En nuestra consulta encontrarás
-          un enfoque centrado en ti, desde un entorno de máxima confianza y empatía.
+          {t('home.hero_subtitle')}
         </p>
         <div className="flex flex-col sm:flex-row items-center gap-4 pt-6">
           <button className="w-full sm:w-auto bg-primary-500 hover:bg-primary-600 text-white px-8 py-3.5 rounded-full font-semibold transition-all shadow-lg shadow-primary-200/50 hover:shadow-primary-300 hover:-translate-y-0.5">
-            Comenzar tu Terapia
+            {t('home.book_now')}
           </button>
           <button className="w-full sm:w-auto bg-white text-primary-600 hover:bg-primary-50 px-8 py-3.5 rounded-full font-semibold border border-primary-200 transition-all flex items-center justify-center gap-2 hover:-translate-y-0.5">
-            <span className="text-xl">🤖</span> Asistente IA Inicial
+            <span className="text-xl">🤖</span> {t('home.ai_assistant')}
           </button>
         </div>
       </div>

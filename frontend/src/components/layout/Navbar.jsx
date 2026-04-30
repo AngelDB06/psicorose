@@ -2,18 +2,26 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import logoImg from '../../assets/logo.jpg';
 import { useAuth } from '../../context/AuthContext';
-
-const NAV_LINKS = [
-  { to: '/', label: 'Inicio' },
-  { to: '/sobre-rosa', label: 'Sobre la Dra. Rosa' },
-  { to: '/opiniones', label: 'Opiniones' },
-  { to: '/blog', label: 'Blog' },
-];
+import { useTranslation } from 'react-i18next';
 
 function Navbar() {
   const { pathname } = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, logout } = useAuth();
+  const { t, i18n } = useTranslation();
+
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+  };
+
+  const NAV_LINKS = [
+    { to: '/', label: t('nav.home') },
+    { to: '/sobre-rosa', label: t('nav.about') },
+    { to: '/opiniones', label: t('nav.reviews') },
+    { to: '/blog', label: t('nav.blog') },
+  ];
+
+  const currentLang = i18n.language.split('-')[0];
 
   return (
     <nav className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-primary-100">
@@ -40,6 +48,22 @@ function Navbar() {
             </Link>
           ))}
           
+          {/* Selector de Idioma */}
+          <div className="flex items-center bg-slate-100 p-1 rounded-full border border-slate-200">
+            <button
+              onClick={() => changeLanguage('es')}
+              className={`px-2 py-0.5 rounded-full text-[10px] font-black transition-all ${currentLang === 'es' ? 'bg-white text-primary-600 shadow-sm' : 'text-slate-400'}`}
+            >
+              ES
+            </button>
+            <button
+              onClick={() => changeLanguage('en')}
+              className={`px-2 py-0.5 rounded-full text-[10px] font-black transition-all ${currentLang === 'en' ? 'bg-white text-primary-600 shadow-sm' : 'text-slate-400'}`}
+            >
+              EN
+            </button>
+          </div>
+
           {user ? (
             <div className="flex items-center gap-4 ml-2 border-l border-primary-100 pl-6">
               {user.role === 'admin' ? (
@@ -48,7 +72,7 @@ function Navbar() {
                 </Link>
               ) : (
                 <Link to="/dashboard" className="text-slate-600 hover:text-primary-600 font-semibold transition-colors">
-                  Mi Panel
+                  {t('nav.profile')}
                 </Link>
               )}
               <div className="flex items-center gap-3">
@@ -67,7 +91,7 @@ function Navbar() {
                 <button
                   onClick={logout}
                   className="text-slate-400 hover:text-red-500 transition-colors"
-                  title="Cerrar sesión"
+                  title={t('nav.logout')}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -84,13 +108,13 @@ function Navbar() {
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                 </svg>
-                Iniciar Sesión
+                {t('nav.login')}
               </Link>
               <Link
                 to="/reservar"
                 className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-2.5 rounded-full transition-all shadow-sm shadow-primary-200"
               >
-                Reservar Cita
+                {t('home.book_now')}
               </Link>
             </>
           )}
@@ -109,7 +133,7 @@ function Navbar() {
       </div>
 
       {/* Menú móvil desplegable */}
-      <div className={`md:hidden overflow-hidden transition-all duration-300 ${menuOpen ? 'max-h-72 border-t border-primary-100' : 'max-h-0'}`}>
+      <div className={`md:hidden overflow-hidden transition-all duration-300 ${menuOpen ? 'max-h-[30rem] border-t border-primary-100' : 'max-h-0'}`}>
         <div className="flex flex-col gap-2 px-6 py-4">
           {NAV_LINKS.map(({ to, label }) => (
             <Link
@@ -125,6 +149,12 @@ function Navbar() {
             </Link>
           ))}
           
+          {/* Selector de Idioma Móvil */}
+          <div className="flex items-center gap-4 py-2 px-3">
+             <button onClick={() => changeLanguage('es')} className={`text-xs font-black ${currentLang === 'es' ? 'text-primary-600' : 'text-slate-400'}`}>ESPAÑOL</button>
+             <button onClick={() => changeLanguage('en')} className={`text-xs font-black ${currentLang === 'en' ? 'text-primary-600' : 'text-slate-400'}`}>ENGLISH</button>
+          </div>
+
           {user ? (
             <div className="mt-4 pt-4 border-t border-primary-100 flex flex-col gap-2">
               {user.role === 'admin' ? (
@@ -141,7 +171,7 @@ function Navbar() {
                   onClick={() => setMenuOpen(false)}
                   className="py-2 text-sm font-semibold rounded-lg px-3 transition-colors text-slate-600 hover:bg-primary-50 hover:text-primary-600"
                 >
-                  Mi Panel ({user.name.split(' ')[0]})
+                  {t('nav.profile')} ({user.name.split(' ')[0]})
                 </Link>
               )}
               <button
@@ -154,7 +184,7 @@ function Navbar() {
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                 </svg>
-                Cerrar Sesión
+                {t('nav.logout')}
               </button>
             </div>
           ) : (
@@ -167,14 +197,14 @@ function Navbar() {
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                 </svg>
-                Iniciar Sesión
+                {t('nav.login')}
               </Link>
               <Link
                 to="/reservar"
                 onClick={() => setMenuOpen(false)}
                 className="mt-2 text-center bg-primary-500 hover:bg-primary-600 text-white px-6 py-2.5 rounded-full transition-all font-semibold text-sm"
               >
-                Reservar Cita
+                {t('home.book_now')}
               </Link>
             </>
           )}
