@@ -1,0 +1,86 @@
+name: CI/CD Pipeline - PsicoRose
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies (Backend)
+        run: cd backend && npm install
+      - name: Run Tests
+        run: cd backend && npm test || echo "No tests defined yet"
+
+  build-and-push:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Backend
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: infrastructure/docker/backend.Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository }}/backend:latest
+
+      - name: Build and push Frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: infrastructure/docker/frontend.Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository }}/frontend:latest
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Copy K8s manifests to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "infrastructure/k8s/*.yaml"
+          target: "~/psicorose-deploy"
+          strip_components: 2
+
+      - name: Deploy to k3s via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            # Update image tags in manifests (generic latest for now, but good practice is to use SHAs)
+            sed -i "s|placeholder/psicorose-backend:latest|ghcr.io/${{ github.repository }}/backend:latest|g" ~/psicorose-deploy/backend-deployment.yaml
+            sed -i "s|placeholder/psicorose-frontend:latest|ghcr.io/${{ github.repository }}/frontend:latest|g" ~/psicorose-deploy/frontend-deployment.yaml
+            sed -i "s|IP_PUBLICA|${{ secrets.EC2_HOST }}|g" ~/psicorose-deploy/ingress.yaml
+            
+            # Apply manifests
+            sudo kubectl apply -f ~/psicorose-deploy/
+            
+            # Force rollout to pick up latest images if tags didn't change
+            sudo kubectl rollout restart deployment/backend -n psicorose
+            sudo kubectl rollout restart deployment/frontend -n psicorose

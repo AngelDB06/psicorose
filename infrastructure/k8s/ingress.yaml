@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: psicorose-ingress
+  namespace: psicorose
+  annotations:
+    # Use Traefik (default in k3s)
+    kubernetes.io/ingress.class: traefik
+    # Optional: Enable cert-manager for automatic SSL
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  # tls:
+  # - hosts:
+  #   - psicorose.IP_PUBLICA.sslip.io
+  #   secretName: psicorose-tls
+  rules:
+  - host: psicorose.IP_PUBLICA.sslip.io # Placeholder: Reemplazar IP_PUBLICA con la IP real
+    http:
+      paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: backend-service
+            port:
+              number: 5000
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-service
+            port:
+              number: 80

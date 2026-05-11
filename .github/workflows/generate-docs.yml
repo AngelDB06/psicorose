@@ -1,0 +1,28 @@
+name: Generate Documentation
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install JSDoc
+        run: npm install -g jsdoc
+      - name: Generate Backend Docs
+        run: jsdoc -r backend/src -d docs/backend
+      - name: Generate Frontend Docs
+        run: jsdoc -r frontend/src -d docs/frontend
+      - name: Commit and Push Docs
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add docs/
+          git commit -m "docs: automatic documentation generation [skip ci]" || echo "No changes to commit"
+          git push
