@@ -42,7 +42,7 @@ jobs:
       - name: Build and push Backend
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./backend
           file: infrastructure/docker/backend.Dockerfile
           push: true
           # Usamos la variable de entorno OWNER_LC que acabamos de crear
