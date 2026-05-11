@@ -41,7 +41,7 @@ function BookingPage() {
     setLoading(true);
     try {
       const token = localStorage.getItem('psicorose_token');
-      const response = await fetch('http://localhost:5000/api/appointments', {
+      const response = await fetch('/api/appointments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(formData),

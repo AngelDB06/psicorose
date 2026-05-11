@@ -24,7 +24,7 @@ function AdminBlogPage() {
     try {
       setLoading(true);
       const token = localStorage.getItem('psicorose_token');
-      const response = await fetch('http://localhost:5000/api/posts/admin/all', {
+      const response = await fetch('/api/posts/admin/all', {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) throw new Error('Error al cargar los artículos');
@@ -80,7 +80,7 @@ function AdminBlogPage() {
   const openEditForm = (post) => {
     setCurrentPost(post);
     setImageFile(null);
-    setImagePreview(post.image ? `http://localhost:5000${post.image}` : '');
+    setImagePreview(post.image ? `${post.image}` : '');
     setFormData({
       title: post.title,
       category: post.category,
@@ -119,8 +119,8 @@ function AdminBlogPage() {
       }
 
       const url = currentPost 
-        ? `http://localhost:5000/api/posts/${currentPost._id}`
-        : 'http://localhost:5000/api/posts';
+        ? `/api/posts/${currentPost._id}`
+        : '/api/posts';
         
       const method = currentPost ? 'PATCH' : 'POST';
 
@@ -149,7 +149,7 @@ function AdminBlogPage() {
     
     try {
       const token = localStorage.getItem('psicorose_token');
-      const response = await fetch(`http://localhost:5000/api/posts/${id}`, {
+      const response = await fetch(`/api/posts/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });

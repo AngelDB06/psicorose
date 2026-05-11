@@ -10,7 +10,7 @@ function PostCard({ slug, image, category, title, excerpt, date, readTime }) {
       {/* Imagen del post */}
       <div className="relative overflow-hidden h-52 bg-slate-100">
         <img
-          src={image?.startsWith('http') ? image : `http://localhost:5000${image}`}
+          src={image?.startsWith('http') ? image : `${image}`}
           alt={title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           onError={(e) => {

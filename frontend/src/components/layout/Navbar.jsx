@@ -82,7 +82,7 @@ function Navbar() {
                   </span>
                   <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-200 group-hover:border-primary-400 transition-all shadow-sm bg-primary-50 flex items-center justify-center">
                     {user.avatar ? (
-                      <img src={`http://localhost:5000${user.avatar}`} alt="Avatar" className="w-full h-full object-cover" />
+                      <img src={`${user.avatar}`} alt="Avatar" className="w-full h-full object-cover" />
                     ) : (
                       <span className="text-primary-600 font-bold text-sm">{user.name.charAt(0).toUpperCase()}</span>
                     )}

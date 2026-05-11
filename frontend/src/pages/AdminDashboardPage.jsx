@@ -18,7 +18,7 @@ function AdminDashboardPage() {
   const fetchAppointments = async () => {
     try {
       const token = localStorage.getItem('psicorose_token');
-      const response = await fetch('http://localhost:5000/api/appointments', {
+      const response = await fetch('/api/appointments', {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) throw new Error('Error al cargar las citas');
@@ -38,7 +38,7 @@ function AdminDashboardPage() {
   const handleStatusChange = async (id, newStatus) => {
     try {
       const token = localStorage.getItem('psicorose_token');
-      const response = await fetch(`http://localhost:5000/api/appointments/${id}/status`, {
+      const response = await fetch(`/api/appointments/${id}/status`, {
         method: 'PATCH',
         headers: { 
           'Content-Type': 'application/json',
@@ -217,7 +217,7 @@ function AdminDashboardPage() {
                             <div className="flex items-center gap-3">
                               <div className="w-10 h-10 rounded-full bg-primary-50 text-primary-600 flex items-center justify-center font-bold text-sm border border-primary-100">
                                 {appt.user?.avatar ? (
-                                  <img src={`http://localhost:5000${appt.user.avatar}`} alt="Avatar" className="w-full h-full object-cover rounded-full" />
+                                  <img src={`${appt.user.avatar}`} alt="Avatar" className="w-full h-full object-cover rounded-full" />
                                 ) : (
                                   appt.user?.name?.charAt(0).toUpperCase()
                                 )}

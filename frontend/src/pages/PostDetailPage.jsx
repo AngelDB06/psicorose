@@ -13,7 +13,7 @@ function PostDetailPage() {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/posts/${slug}`);
+        const response = await fetch(`/api/posts/${slug}`);
         if (!response.ok) throw new Error(t('post.not_found'));
         const data = await response.json();
         setPost(data);
@@ -54,7 +54,7 @@ function PostDetailPage() {
       {/* Imagen de cabecera */}
       <div className="relative h-72 md:h-96 overflow-hidden bg-slate-200">
         <img
-          src={post.image?.startsWith('http') ? post.image : (post.image ? `http://localhost:5000${post.image}` : 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=1200')}
+          src={post.image?.startsWith('http') ? post.image : (post.image ? `${post.image}` : 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=1200')}
           alt={post.title}
           className="w-full h-full object-cover"
           onError={(e) => {

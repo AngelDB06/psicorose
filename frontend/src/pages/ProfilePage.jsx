@@ -12,7 +12,7 @@ function ProfilePage() {
     phone: user?.phone || '',
   });
   const [avatar, setAvatar]   = useState(null);
-  const [preview, setPreview] = useState(user?.avatar ? `http://localhost:5000${user.avatar}` : null);
+  const [preview, setPreview] = useState(user?.avatar ? `${user.avatar}` : null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const fileInputRef = useRef();
@@ -44,7 +44,7 @@ function ProfilePage() {
       data.append('phone', formData.phone);
       if (avatar) data.append('avatar', avatar);
 
-      const response = await fetch('http://localhost:5000/api/auth/update-profile', {
+      const response = await fetch('/api/auth/update-profile', {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` },
         body: data,

@@ -17,7 +17,7 @@ function ReviewsPage() {
 
   const fetchReviews = useCallback(async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/reviews');
+      const response = await fetch('/api/reviews');
       if (response.ok) {
         const data = await response.json();
         setReviews(data);
@@ -33,7 +33,7 @@ function ReviewsPage() {
     if (!user) return;
     try {
       const token = localStorage.getItem('psicorose_token');
-      const response = await fetch('http://localhost:5000/api/appointments/me', {
+      const response = await fetch('/api/appointments/me', {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (response.ok) {
@@ -58,7 +58,7 @@ function ReviewsPage() {
 
     try {
       const token = localStorage.getItem('psicorose_token');
-      const response = await fetch('http://localhost:5000/api/reviews', {
+      const response = await fetch('/api/reviews', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -32,7 +32,7 @@ function DashboardPage() {
     const fetchAppointments = async () => {
       try {
         const token = localStorage.getItem('psicorose_token');
-        const response = await fetch('http://localhost:5000/api/appointments/me', {
+        const response = await fetch('/api/appointments/me', {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (response.ok) {
@@ -53,7 +53,7 @@ function DashboardPage() {
     setCancellingId(appointmentId);
     try {
       const token = localStorage.getItem('psicorose_token');
-      const response = await fetch(`http://localhost:5000/api/appointments/${appointmentId}/cancel`, {
+      const response = await fetch(`/api/appointments/${appointmentId}/cancel`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -105,7 +105,7 @@ function DashboardPage() {
           <div className="flex items-center gap-8 relative z-10">
             <div className="w-24 h-24 md:w-32 md:h-32 rounded-[2.5rem] overflow-hidden shadow-2xl shadow-primary-200/50 border-4 border-white flex-shrink-0">
               {user?.avatar ? (
-                <img src={`http://localhost:5000${user.avatar}`} alt="Avatar" className="w-full h-full object-cover" />
+                <img src={`${user.avatar}`} alt="Avatar" className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-4xl font-black">
                   {user?.name?.charAt(0).toUpperCase()}
@@ -138,7 +138,7 @@ function DashboardPage() {
             <button
               onClick={() => {
                 const token = localStorage.getItem('psicorose_token');
-                window.open(`http://localhost:5000/api/reports/appointments?token=${token}`, '_blank');
+                window.open(`/api/reports/appointments?token=${token}`, '_blank');
               }}
               className="px-8 py-3 bg-white text-slate-700 border border-slate-200 rounded-2xl font-bold shadow-sm hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
             >

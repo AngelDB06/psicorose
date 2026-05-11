@@ -10,7 +10,7 @@ function ReviewsPreview() {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/reviews');
+        const response = await fetch('/api/reviews');
         if (response.ok) {
           const data = await response.json();
           setReviews(data.slice(0, 3));
