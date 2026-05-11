@@ -7,6 +7,8 @@ on:
 jobs:
   docs:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # Permiso explícito para poder subir la documentación
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js

@@ -40,7 +40,12 @@ jobs:
           context: .
           file: infrastructure/docker/backend.Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}/backend:latest
+          # Convert repository name to lowercase for Docker
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/psicorose-backend:latest
+          # We use github.repository_owner and manually type lowercase name to avoid errors
+        env:
+          OWNER: ${{ github.repository_owner }}
 
       - name: Build and push Frontend
         uses: docker/build-push-action@v5
@@ -48,7 +53,8 @@ jobs:
           context: ./frontend
           file: infrastructure/docker/frontend.Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}/frontend:latest
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/psicorose-frontend:latest
 
   deploy:
     needs: build-and-push
@@ -73,14 +79,17 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # Update image tags in manifests (generic latest for now, but good practice is to use SHAs)
-            sed -i "s|placeholder/psicorose-backend:latest|ghcr.io/${{ github.repository }}/backend:latest|g" ~/psicorose-deploy/backend-deployment.yaml
-            sed -i "s|placeholder/psicorose-frontend:latest|ghcr.io/${{ github.repository }}/frontend:latest|g" ~/psicorose-deploy/frontend-deployment.yaml
+            # Convert owner to lowercase for the sed command
+            OWNER_LC=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+            
+            # Update image tags in manifests
+            sed -i "s|placeholder/psicorose-backend:latest|ghcr.io/${OWNER_LC}/psicorose-backend:latest|g" ~/psicorose-deploy/backend-deployment.yaml
+            sed -i "s|placeholder/psicorose-frontend:latest|ghcr.io/${OWNER_LC}/psicorose-frontend:latest|g" ~/psicorose-deploy/frontend-deployment.yaml
             sed -i "s|IP_PUBLICA|${{ secrets.EC2_HOST }}|g" ~/psicorose-deploy/ingress.yaml
             
             # Apply manifests
             sudo kubectl apply -f ~/psicorose-deploy/
             
-            # Force rollout to pick up latest images if tags didn't change
+            # Force rollout
             sudo kubectl rollout restart deployment/backend -n psicorose
             sudo kubectl rollout restart deployment/frontend -n psicorose
