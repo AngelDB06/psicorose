@@ -1,22 +1,7 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
-const SERVICES = [
-  {
-    icon: '🪴',
-    title: 'Terapia Individual',
-    desc: 'Acompañamiento personalizado para abordar ansiedad, estrés, gestión emocional y autoconocimiento.',
-  },
-  {
-    icon: '👥',
-    title: 'Terapia de Pareja',
-    desc: 'Reconstruye la comunicación y el bienestar afectivo de tu relación en un entorno seguro y neutral.',
-  },
-  {
-    icon: '🌐',
-    title: 'Consultas Online',
-    desc: 'A través de nuestra plataforma, recibe atención psicológica ininterrumpida desde cualquier lugar del mundo.',
-  },
-];
+const ICONS = ['🪴', '👥', '🌐'];
 
 function ServiceCard({ icon, title, desc }) {
   return (
@@ -31,19 +16,21 @@ function ServiceCard({ icon, title, desc }) {
 }
 
 function ServicesSection() {
+  const { t } = useTranslation();
+  const services = t('services.items', { returnObjects: true });
+
   return (
     <section className="bg-white py-24 px-6 relative mt-12 rounded-t-[3rem] shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.05)] border-t border-primary-50">
       <div className="max-w-7xl mx-auto text-center">
         <h2 className="text-3xl md:text-4xl font-bold text-primary-900 mb-6">
-          ¿Cómo podemos ayudarte?
+          {t('services.title')}
         </h2>
         <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-16">
-          Ofrecemos espacios de terapia adaptados a tus necesidades clínicas, basados en el
-          respeto mutuo, la escucha activa y el rigor profesional.
+          {t('services.subtitle')}
         </p>
         <div className="grid md:grid-cols-3 gap-8">
-          {SERVICES.map((service) => (
-            <ServiceCard key={service.title} {...service} />
+          {Array.isArray(services) && services.map((service, idx) => (
+            <ServiceCard key={service.title} icon={ICONS[idx]} title={service.title} desc={service.desc} />
           ))}
         </div>
       </div>

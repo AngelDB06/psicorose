@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import PostCard from '../components/common/PostCard';
+import { useTranslation } from 'react-i18next';
 
 function BlogPage() {
+  const { t } = useTranslation();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [activeCategory, setActiveCategory] = useState('Todos');
+  const [activeCategory, setActiveCategory] = useState(t('blog.all'));
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -20,14 +22,19 @@ function BlogPage() {
         setLoading(false);
       }
     };
-
     fetchPosts();
   }, []);
 
-  const categories = ['Todos', ...new Set(posts.map((p) => p.category))];
+  // Reset active category when language changes so "Todos"/"All" stays in sync
+  useEffect(() => {
+    setActiveCategory(t('blog.all'));
+  }, [t]);
+
+  const allLabel = t('blog.all');
+  const categories = [allLabel, ...new Set(posts.map((p) => p.category))];
 
   const filteredPosts =
-    activeCategory === 'Todos'
+    activeCategory === allLabel
       ? posts
       : posts.filter((p) => p.category === activeCategory);
 
@@ -37,13 +44,13 @@ function BlogPage() {
       <section className="bg-gradient-to-br from-primary-700 to-primary-900 text-white">
         <div className="max-w-7xl mx-auto px-6 py-16 md:py-20 text-center">
           <span className="inline-block px-4 py-1.5 bg-white/10 border border-white/20 text-primary-100 text-sm font-semibold rounded-full backdrop-blur-sm mb-6">
-            📝 Blog de PsicoRose
+            {t('blog.tag')}
           </span>
           <h1 className="text-4xl md:text-5xl font-extrabold leading-tight mb-4">
-            Artículos y Reflexiones
+            {t('blog.title')}
           </h1>
           <p className="text-primary-200 text-lg max-w-2xl mx-auto">
-            Recursos, consejos y reflexiones de la Dra. Rosa María para acompañarte en tu camino hacia el bienestar emocional.
+            {t('blog.subtitle')}
           </p>
         </div>
       </section>
@@ -89,7 +96,7 @@ function BlogPage() {
           </div>
         ) : (
           <div className="text-center py-20">
-            <p className="text-slate-400 text-lg">No hay artículos publicados todavía.</p>
+            <p className="text-slate-400 text-lg">{t('blog.empty')}</p>
           </div>
         )}
       </section>

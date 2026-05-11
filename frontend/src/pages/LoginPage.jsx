@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { t } = useTranslation();
+  const [email, setEmail]               = useState('');
+  const [password, setPassword]         = useState('');
   const [showPassword, setShowPassword] = useState(false);
-
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [error, setError]               = useState('');
+  const [loading, setLoading]           = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -16,7 +17,7 @@ function LoginPage() {
     e.preventDefault();
     setError('');
     setLoading(true);
-    
+
     try {
       const response = await fetch('http://localhost:5000/api/auth/login', {
         method: 'POST',
@@ -25,20 +26,11 @@ function LoginPage() {
       });
 
       const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Error al iniciar sesión');
 
-      if (!response.ok) {
-        throw new Error(data.message || 'Error al iniciar sesión');
-      }
-
-      // Login exitoso usando el Contexto
       login(data);
-      
-      // Redirigir según el rol
-      if (data.role === 'admin') {
-        navigate('/admin/dashboard');
-      } else {
-        navigate('/dashboard');
-      }
+      if (data.role === 'admin') navigate('/admin/dashboard');
+      else navigate('/dashboard');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -48,12 +40,10 @@ function LoginPage() {
 
   return (
     <div className="min-h-[calc(100vh-80px)] flex items-center justify-center px-6 py-12 bg-gradient-to-br from-slate-50 via-primary-50/30 to-slate-50">
-      {/* Blobs decorativos */}
       <div className="absolute top-32 right-10 w-72 h-72 bg-primary-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30" />
       <div className="absolute bottom-10 left-10 w-64 h-64 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30" />
 
       <div className="relative w-full max-w-md">
-        {/* Tarjeta de Login */}
         <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-xl border border-primary-100 p-8 md:p-10">
           {/* Cabecera */}
           <div className="text-center mb-8">
@@ -62,11 +52,11 @@ function LoginPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-slate-800">Iniciar Sesión</h1>
-            <p className="text-slate-500 text-sm mt-2">Accede a tu cuenta de PsicoRose</p>
+            <h1 className="text-2xl font-bold text-slate-800">{t('login.title')}</h1>
+            <p className="text-slate-500 text-sm mt-2">{t('login.subtitle')}</p>
           </div>
 
-          {/* Mensaje de error */}
+          {/* Error */}
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm font-semibold flex items-center gap-2">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -81,7 +71,7 @@ function LoginPage() {
             {/* Email */}
             <div>
               <label htmlFor="email" className="block text-sm font-semibold text-slate-700 mb-1.5">
-                Correo electrónico
+                {t('login.email_label')}
               </label>
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
@@ -90,12 +80,9 @@ function LoginPage() {
                   </svg>
                 </span>
                 <input
-                  id="email"
-                  type="email"
-                  value={email}
+                  id="email" type="email" value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="tu@email.com"
-                  required
+                  placeholder="tu@email.com" required
                   className="w-full pl-12 pr-4 py-3 rounded-xl border border-primary-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent text-slate-700 placeholder:text-slate-400 transition-all"
                 />
               </div>
@@ -104,7 +91,7 @@ function LoginPage() {
             {/* Contraseña */}
             <div>
               <label htmlFor="password" className="block text-sm font-semibold text-slate-700 mb-1.5">
-                Contraseña
+                {t('login.password_label')}
               </label>
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
@@ -117,8 +104,7 @@ function LoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  required
+                  placeholder="••••••••" required
                   className="w-full pl-12 pr-12 py-3 rounded-xl border border-primary-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent text-slate-700 placeholder:text-slate-400 transition-all"
                 />
                 <button
@@ -141,37 +127,31 @@ function LoginPage() {
               </div>
             </div>
 
-            {/* Recordar y enlace */}
+            {/* Recuérdame y olvidé */}
             <div className="flex items-center justify-between text-sm">
               <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 rounded border-primary-300 text-primary-500 focus:ring-primary-400"
-                />
-                <span className="text-slate-600">Recordarme</span>
+                <input type="checkbox" className="w-4 h-4 rounded border-primary-300 text-primary-500 focus:ring-primary-400" />
+                <span className="text-slate-600">{t('login.remember_me')}</span>
               </label>
               <a href="#" className="text-primary-600 hover:text-primary-700 font-semibold transition-colors">
-                ¿Olvidaste tu contraseña?
+                {t('login.forgot_password')}
               </a>
             </div>
 
-            {/* Botón de envío */}
             <button
-              type="submit"
-              disabled={loading}
+              type="submit" disabled={loading}
               className={`w-full bg-primary-500 text-white py-3.5 rounded-xl font-semibold transition-all shadow-lg shadow-primary-200/50 mt-2 ${
                 loading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-primary-600 hover:shadow-primary-300 hover:-translate-y-0.5'
               }`}
             >
-              {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+              {loading ? t('login.submitting') : t('login.submit')}
             </button>
           </form>
 
-          {/* Enlace a registro */}
           <p className="text-center text-sm text-slate-500 mt-8">
-            ¿No tienes cuenta?{' '}
+            {t('login.no_account')}{' '}
             <Link to="/registro" className="text-primary-600 hover:text-primary-700 font-semibold transition-colors">
-              Regístrate aquí
+              {t('login.register_link')}
             </Link>
           </p>
         </div>

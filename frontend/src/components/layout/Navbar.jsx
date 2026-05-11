@@ -68,7 +68,7 @@ function Navbar() {
             <div className="flex items-center gap-4 ml-2 border-l border-primary-100 pl-6">
               {user.role === 'admin' ? (
                 <Link to="/admin/dashboard" className="text-primary-700 hover:text-primary-800 font-bold transition-colors">
-                  Panel de Dra. Rosa
+                  {t('nav.admin_panel')}
                 </Link>
               ) : (
                 <Link to="/dashboard" className="text-slate-600 hover:text-primary-600 font-semibold transition-colors">
@@ -163,7 +163,7 @@ function Navbar() {
                   onClick={() => setMenuOpen(false)}
                   className="py-2 text-sm font-bold rounded-lg px-3 transition-colors text-primary-700 hover:bg-primary-50 hover:text-primary-800"
                 >
-                  Panel de Dra. Rosa
+                  {t('nav.admin_panel')}
                 </Link>
               ) : (
                 <Link

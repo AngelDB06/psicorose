@@ -10,7 +10,7 @@ function HeroSection() {
       {/* Columna Texto */}
       <div className="flex-1 space-y-6 z-10">
         <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary-50 text-primary-700 text-sm font-semibold rounded-full border border-primary-100">
-          <span className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></span>
+          <span className="w-2 h-2 rounded-full bg-primary-500 animate-pulse" />
           {t('home.hero_tag')}
         </span>
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-slate-800">
@@ -34,13 +34,12 @@ function HeroSection() {
 
       {/* Columna Imagen */}
       <div className="flex-1 w-full relative z-10">
-        {/* Blobs de fondo */}
-        <div className="absolute -top-10 -right-10 w-64 h-64 bg-primary-200 rounded-full mix-blend-multiply filter blur-3xl opacity-60"></div>
-        <div className="absolute -bottom-10 -left-10 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-60"></div>
+        <div className="absolute -top-10 -right-10 w-64 h-64 bg-primary-200 rounded-full mix-blend-multiply filter blur-3xl opacity-60" />
+        <div className="absolute -bottom-10 -left-10 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-60" />
 
         <img
           src={heroImg}
-          alt="Entorno seguro y calmado"
+          alt={t('home.hero_img_alt')}
           className="relative z-10 w-full h-[450px] object-cover rounded-[2.5rem] shadow-2xl border-8 border-white transform transition-transform hover:scale-[1.02] duration-500"
         />
 
@@ -51,8 +50,8 @@ function HeroSection() {
         >
           <div className="bg-primary-100 p-2 rounded-full">📅</div>
           <div>
-            <p className="text-xs text-slate-500 font-semibold mb-0.5">Cita más próxima</p>
-            <p className="text-sm text-primary-900 font-bold">Mañana, 10:30 AM</p>
+            <p className="text-xs text-slate-500 font-semibold mb-0.5">{t('home.next_appt_label')}</p>
+            <p className="text-sm text-primary-900 font-bold">{t('home.next_appt_value')}</p>
           </div>
         </div>
       </div>

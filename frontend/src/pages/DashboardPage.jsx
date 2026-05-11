@@ -3,22 +3,23 @@ import { useAuth } from '../context/AuthContext';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
-const STATUS_CONFIG = {
-  pending:   { label: 'Pendiente',   classes: 'bg-amber-100 text-amber-700 border-amber-200' },
-  confirmed: { label: 'Confirmada',  classes: 'bg-green-100 text-green-700 border-green-200' },
-  cancelled: { label: 'Cancelada',   classes: 'bg-red-100 text-red-600 border-red-200' },
-  completed: { label: 'Completada',  classes: 'bg-slate-100 text-slate-600 border-slate-200' },
-};
-
 function DashboardPage() {
   const { user, logout } = useAuth();
-  const location = useLocation();
-  const { t } = useTranslation();
+  const location         = useLocation();
+  const { t, i18n }     = useTranslation();
 
   const [appointments, setAppointments] = useState([]);
   const [loadingAppts, setLoadingAppts] = useState(true);
   const [successMessage, setSuccessMessage] = useState(location.state?.successMessage || '');
   const [cancellingId, setCancellingId] = useState(null);
+
+  // Status labels are derived from t() so they update on language change
+  const STATUS_CONFIG = {
+    pending:   { label: t('status.pending'),   classes: 'bg-amber-100 text-amber-700 border-amber-200' },
+    confirmed: { label: t('status.confirmed'), classes: 'bg-green-100 text-green-700 border-green-200' },
+    cancelled: { label: t('status.cancelled'), classes: 'bg-red-100 text-red-600 border-red-200' },
+    completed: { label: t('status.completed'), classes: 'bg-slate-100 text-slate-600 border-slate-200' },
+  };
 
   useEffect(() => {
     if (successMessage) {
@@ -48,8 +49,7 @@ function DashboardPage() {
   }, []);
 
   const handleCancel = async (appointmentId) => {
-    if (!window.confirm('¿Estás seguro de que quieres cancelar esta cita?')) return;
-
+    if (!window.confirm(t('dashboard.cancel_confirm'))) return;
     setCancellingId(appointmentId);
     try {
       const token = localStorage.getItem('psicorose_token');
@@ -57,7 +57,6 @@ function DashboardPage() {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` },
       });
-
       if (response.ok) {
         setAppointments((prev) =>
           prev.map((a) => (a._id === appointmentId ? { ...a, status: 'cancelled' } : a))
@@ -70,9 +69,11 @@ function DashboardPage() {
     }
   };
 
+  const locale = i18n.language.startsWith('en') ? 'en-GB' : 'es-ES';
+
   const formatDate = (dateStr) => {
     const d = new Date(dateStr);
-    return d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
+    return d.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' });
   };
 
   const upcomingAppointments = appointments
@@ -99,8 +100,8 @@ function DashboardPage() {
 
         {/* Hero de Bienvenida */}
         <section className="relative bg-white rounded-[3rem] p-8 md:p-12 shadow-sm border border-slate-200 overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-8">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-primary-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-50"></div>
-          
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-50" />
+
           <div className="flex items-center gap-8 relative z-10">
             <div className="w-24 h-24 md:w-32 md:h-32 rounded-[2.5rem] overflow-hidden shadow-2xl shadow-primary-200/50 border-4 border-white flex-shrink-0">
               {user?.avatar ? (
@@ -117,8 +118,12 @@ function DashboardPage() {
               </h1>
               <p className="text-slate-500 font-medium mt-2 text-lg">{t('dashboard.subtitle')}</p>
               <div className="flex flex-wrap gap-2 mt-4">
-                <Link to="/perfil" className="px-4 py-1.5 bg-slate-100 text-slate-600 rounded-full text-xs font-black hover:bg-slate-200 transition-colors">{t('nav.profile').toUpperCase()}</Link>
-                <button onClick={logout} className="px-4 py-1.5 bg-red-50 text-red-500 rounded-full text-xs font-black hover:bg-red-100 transition-colors">{t('nav.logout').toUpperCase()}</button>
+                <Link to="/perfil" className="px-4 py-1.5 bg-slate-100 text-slate-600 rounded-full text-xs font-black hover:bg-slate-200 transition-colors">
+                  {t('nav.profile').toUpperCase()}
+                </Link>
+                <button onClick={logout} className="px-4 py-1.5 bg-red-50 text-red-500 rounded-full text-xs font-black hover:bg-red-100 transition-colors">
+                  {t('nav.logout').toUpperCase()}
+                </button>
               </div>
             </div>
           </div>
@@ -130,7 +135,7 @@ function DashboardPage() {
               </svg>
               {t('dashboard.new_appointment')}
             </Link>
-            <button 
+            <button
               onClick={() => {
                 const token = localStorage.getItem('psicorose_token');
                 window.open(`http://localhost:5000/api/reports/appointments?token=${token}`, '_blank');
@@ -147,25 +152,27 @@ function DashboardPage() {
 
         {/* Contenido Dinámico */}
         <div className="grid lg:grid-cols-3 gap-10">
-          
+
           {/* Próximas Sesiones */}
           <div className="lg:col-span-2 space-y-10">
-            
+
             {/* Cita más cercana destacada */}
             {nextAppt && (
               <div className="bg-gradient-to-br from-primary-600 to-primary-800 rounded-[2.5rem] p-8 md:p-10 text-white shadow-xl shadow-primary-100 relative overflow-hidden group hover:scale-[1.01] transition-transform">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-700"></div>
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-700" />
                 <div className="relative z-10">
                   <div className="flex items-center gap-3 mb-6">
-                    <span className="px-3 py-1 bg-white/20 rounded-full text-[10px] font-black tracking-widest uppercase">Tu Próxima Sesión</span>
-                    <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                    <span className="px-3 py-1 bg-white/20 rounded-full text-[10px] font-black tracking-widest uppercase">
+                      {t('dashboard.your_next_session')}
+                    </span>
+                    <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
                   </div>
                   <h3 className="text-3xl font-black mb-2">{formatDate(nextAppt.date)}</h3>
                   <p className="text-primary-100 text-xl font-bold flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    {nextAppt.time} horas
+                    {nextAppt.time} h
                   </p>
                   <p className="mt-8 text-primary-200 font-medium italic opacity-80">"{nextAppt.reason}"</p>
                 </div>
@@ -174,8 +181,8 @@ function DashboardPage() {
 
             <div className="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-sm border border-slate-200">
               <h2 className="text-2xl font-black text-slate-900 mb-8 flex items-center gap-3">
-                <span className="w-1.5 h-7 bg-primary-500 rounded-full"></span>
-                Agenda de Sesiones
+                <span className="w-1.5 h-7 bg-primary-500 rounded-full" />
+                {t('dashboard.agenda_title')}
               </h2>
 
               {loadingAppts ? (
@@ -185,7 +192,7 @@ function DashboardPage() {
               ) : upcomingAppointments.length === 0 ? (
                 <div className="text-center py-16 bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-100">
                   <span className="text-5xl block mb-4">🧘‍♂️</span>
-                  <p className="text-slate-500 font-bold">No tienes más citas pendientes en este momento.</p>
+                  <p className="text-slate-500 font-bold">{t('dashboard.no_appointments')}</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -195,7 +202,9 @@ function DashboardPage() {
                       <div key={appt._id} className="flex items-center gap-6 p-6 rounded-3xl border border-slate-100 bg-white hover:shadow-lg hover:shadow-primary-100/30 transition-all group">
                         <div className="w-14 h-14 rounded-2xl bg-primary-50 text-primary-600 flex flex-col items-center justify-center font-black shadow-sm group-hover:bg-primary-600 group-hover:text-white transition-colors">
                           <span className="text-lg leading-none">{new Date(appt.date).getDate()}</span>
-                          <span className="text-[10px] uppercase">{new Date(appt.date).toLocaleDateString('es-ES', { month: 'short' })}</span>
+                          <span className="text-[10px] uppercase">
+                            {new Date(appt.date).toLocaleDateString(locale, { month: 'short' })}
+                          </span>
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="font-extrabold text-slate-800 group-hover:text-primary-700 transition-colors">{appt.reason}</p>
@@ -211,7 +220,7 @@ function DashboardPage() {
                               disabled={cancellingId === appt._id}
                               className="text-[10px] font-black text-red-400 hover:text-red-600 uppercase tracking-widest transition-colors"
                             >
-                              {cancellingId === appt._id ? 'Cancelando...' : 'Cancelar'}
+                              {cancellingId === appt._id ? t('dashboard.cancelling') : t('dashboard.cancel')}
                             </button>
                           )}
                         </div>
@@ -225,61 +234,46 @@ function DashboardPage() {
 
           {/* Lateral */}
           <div className="space-y-10">
-            
+
             {/* Mis Datos */}
             <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-200">
-              <h2 className="text-xl font-black text-slate-900 mb-6 tracking-tight">Mi Perfil</h2>
+              <h2 className="text-xl font-black text-slate-900 mb-6 tracking-tight">{t('dashboard.my_profile')}</h2>
               <div className="space-y-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
+                {[
+                  { icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z', label: t('profile.name_label'), value: user?.name },
+                  { icon: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z', label: 'Email', value: user?.email },
+                  { icon: 'M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z', label: t('register.phone_label'), value: user?.phone || t('profile.no_phone') },
+                ].map(({ icon, label, value }) => (
+                  <div key={label} className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={icon} />
+                      </svg>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{label}</p>
+                      <p className="font-bold text-slate-700 truncate">{value}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Nombre</p>
-                    <p className="font-bold text-slate-700">{user?.name}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Email</p>
-                    <p className="font-bold text-slate-700 truncate">{user?.email}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Teléfono</p>
-                    <p className="font-bold text-slate-700">{user?.phone || 'Sin especificar'}</p>
-                  </div>
-                </div>
+                ))}
               </div>
               <Link to="/perfil" className="w-full mt-10 py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-primary-600 transition-colors flex items-center justify-center">
-                Editar Datos
+                {t('dashboard.edit_data')}
               </Link>
             </div>
 
             {/* Sugerencia Blog */}
             <div className="bg-primary-50 rounded-[2.5rem] p-8 border border-primary-100 flex flex-col items-center text-center">
               <span className="text-4xl mb-4">🍃</span>
-              <h3 className="text-lg font-black text-primary-900 leading-tight mb-2">Reflexiona y crece</h3>
-              <p className="text-sm font-medium text-primary-700/70 mb-6">¿Has leído ya los últimos artículos de Rosa? Podrían ayudarte hoy.</p>
-              <Link to="/blog" className="px-6 py-2.5 bg-white text-primary-600 rounded-full font-black text-xs uppercase tracking-widest shadow-sm border border-primary-100 hover:bg-primary-600 hover:text-white transition-all">Leer Blog</Link>
+              <h3 className="text-lg font-black text-primary-900 leading-tight mb-2">{t('dashboard.blog_cta_title')}</h3>
+              <p className="text-sm font-medium text-primary-700/70 mb-6">{t('dashboard.blog_cta_body')}</p>
+              <Link to="/blog" className="px-6 py-2.5 bg-white text-primary-600 rounded-full font-black text-xs uppercase tracking-widest shadow-sm border border-primary-100 hover:bg-primary-600 hover:text-white transition-all">
+                {t('dashboard.read_blog')}
+              </Link>
             </div>
 
           </div>
         </div>
-
       </div>
     </div>
   );
