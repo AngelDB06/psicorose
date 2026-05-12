@@ -170,9 +170,9 @@ i18n
             title:    '¿Cómo podemos ayudarte?',
             subtitle: 'Ofrecemos espacios de terapia adaptados a tus necesidades clínicas, basados en el respeto mutuo, la escucha activa y el rigor profesional.',
             items: [
-              { title: 'Terapia Individual',   desc: 'Acompañamiento personalizado para abordar ansiedad, estrés, gestión emocional y autoconocimiento.' },
-              { title: 'Terapia de Pareja',    desc: 'Reconstruye la comunicación y el bienestar afectivo de tu relación en un entorno seguro y neutral.' },
-              { title: 'Consultas Online',     desc: 'A través de nuestra plataforma, recibe atención psicológica ininterrumpida desde cualquier lugar del mundo.' },
+              { title: 'Psicoterapia Infantil',   desc: 'Acompañamiento especializado para los más pequeños, adaptando las técnicas a su etapa de desarrollo y necesidades emocionales.' },
+              { title: 'Terapia Adolescentes',    desc: 'Un espacio seguro para que los jóvenes exploren su identidad, gestionen sus emociones y superen sus desafíos actuales.' },
+              { title: 'Psicología Adultos',      desc: 'Terapia individual centrada en resolver problemas de ansiedad, estrés, depresión y mejorar el bienestar emocional general.' },
             ],
           },
           dashboard: {
@@ -372,9 +372,9 @@ i18n
             title:    'How can we help you?',
             subtitle: 'We offer therapy spaces tailored to your clinical needs, based on mutual respect, active listening and professional rigor.',
             items: [
-              { title: 'Individual Therapy',  desc: 'Personalised support to address anxiety, stress, emotional management and self-awareness.' },
-              { title: 'Couples Therapy',     desc: 'Rebuild communication and emotional well-being in your relationship in a safe and neutral environment.' },
-              { title: 'Online Consultations',desc: 'Through our platform, receive uninterrupted psychological care from anywhere in the world.' },
+              { title: 'Child Psychotherapy',     desc: 'Specialized support for the youngest, adapting techniques to their developmental stage and emotional needs.' },
+              { title: 'Adolescent Therapy',      desc: 'A safe space for young people to explore their identity, manage their emotions and overcome current challenges.' },
+              { title: 'Adult Psychology',        desc: 'Individual therapy focused on resolving anxiety, stress, and depression issues and improving overall emotional well-being.' },
             ],
           },
           dashboard: {
