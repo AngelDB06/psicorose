@@ -88,7 +88,7 @@ function HeroSection() {
           variants={itemVariants}
           className="flex flex-col sm:flex-row items-center gap-5 pt-4"
         >
-          <Link to="/reserva" className="w-full sm:w-auto">
+          <Link to="/reservar" className="w-full sm:w-auto">
             <motion.button
               whileHover={{ scale: 1.05, boxShadow: "0 20px 25px -5px rgba(var(--primary-500-rgb), 0.3)" }}
               whileTap={{ scale: 0.95 }}

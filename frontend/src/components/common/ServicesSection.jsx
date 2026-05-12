@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 // Importación de imágenes
 import imgInfantil from '../../assets/psicoterapia-infantil.jpg';
@@ -11,7 +13,7 @@ const IMAGES = [imgInfantil, imgAdolescentes, imgAdultos];
 
 function ServiceCard({ image, title, desc, index, onOpen }) {
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -19,10 +21,10 @@ function ServiceCard({ image, title, desc, index, onOpen }) {
       className="group bg-white rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl hover:shadow-primary-100/50 transition-all duration-500"
     >
       <div className="relative h-64 overflow-hidden">
-        <motion.img 
+        <motion.img
           whileHover={{ scale: 1.1 }}
           transition={{ duration: 0.7 }}
-          src={image} 
+          src={image}
           alt={title}
           className="w-full h-full object-cover transition-transform duration-700"
         />
@@ -36,7 +38,7 @@ function ServiceCard({ image, title, desc, index, onOpen }) {
             {title}
           </h3>
         </div>
-        
+
         <p className="text-slate-600 leading-relaxed font-medium mb-6">
           {desc}
         </p>
@@ -46,7 +48,7 @@ function ServiceCard({ image, title, desc, index, onOpen }) {
           onClick={onOpen}
           className="flex items-center gap-2 text-primary-500 font-bold text-sm uppercase tracking-wider group/btn cursor-pointer"
         >
-          Saber más 
+          Saber más
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 transform group-hover/btn:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" />
           </svg>
@@ -58,8 +60,19 @@ function ServiceCard({ image, title, desc, index, onOpen }) {
 
 function ServicesSection() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const services = t('services.items', { returnObjects: true });
   const [selectedService, setSelectedService] = useState(null);
+
+  const handleBooking = () => {
+    setSelectedService(null);
+    if (isAuthenticated) {
+      navigate('/reservar');
+    } else {
+      navigate('/login');
+    }
+  };
 
   return (
     <section className="py-32 px-6 relative bg-white">
@@ -85,12 +98,12 @@ function ServicesSection() {
 
         <div className="grid lg:grid-cols-3 gap-12">
           {Array.isArray(services) && services.map((service, idx) => (
-            <ServiceCard 
-              key={service.title} 
+            <ServiceCard
+              key={service.title}
               index={idx}
-              image={IMAGES[idx]} 
-              title={service.title} 
-              desc={service.desc} 
+              image={IMAGES[idx]}
+              title={service.title}
+              desc={service.desc}
               onOpen={() => setSelectedService({ ...service, image: IMAGES[idx] })}
             />
           ))}
@@ -102,22 +115,22 @@ function ServicesSection() {
         {selectedService && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
             {/* Overlay */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedService(null)}
               className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
             />
-            
+
             {/* Contenido del Modal */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               className="relative w-full max-w-3xl bg-white rounded-[2.5rem] shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
             >
-              <button 
+              <button
                 onClick={() => setSelectedService(null)}
                 className="absolute top-6 right-6 z-30 bg-white/20 hover:bg-white/40 text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md transition-colors"
               >
@@ -153,8 +166,8 @@ function ServicesSection() {
                       <p className="text-primary-900 font-bold text-lg mb-1">¿Crees que este servicio es para ti?</p>
                       <p className="text-primary-700">Reserva tu primera sesión hoy mismo.</p>
                     </div>
-                    <button 
-                      onClick={() => { setSelectedService(null); /* Redirigir a reserva si fuera necesario */ }}
+                    <button
+                      onClick={handleBooking}
                       className="bg-primary-500 text-white px-8 py-4 rounded-2xl font-bold hover:bg-primary-600 transition-colors shadow-lg shadow-primary-200"
                     >
                       Reservar Cita
