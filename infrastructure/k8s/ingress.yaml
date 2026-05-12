@@ -9,10 +9,35 @@ metadata:
 spec:
   tls:
   - hosts:
-    - psicorose.54.165.173.244.sslip.io
+    - 2dawangeldb.com
+    - www.2dawangeldb.com
     secretName: psicorose-tls
   rules:
-  - host: psicorose.54.165.173.244.sslip.io
+  - host: 2dawangeldb.com
+    http:
+      paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: backend-service
+            port:
+              number: 5000
+      - path: /uploads
+        pathType: Prefix
+        backend:
+          service:
+            name: backend-service
+            port:
+              number: 5000
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-service
+            port:
+              number: 80
+  - host: www.2dawangeldb.com
     http:
       paths:
       - path: /api

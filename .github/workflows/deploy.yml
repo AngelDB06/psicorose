@@ -89,7 +89,6 @@ jobs:
             # Update image tags in manifests
             sed -i "s|placeholder/psicorose-backend:latest|ghcr.io/${OWNER_LC}/psicorose-backend:latest|g" ~/psicorose-deploy/backend-deployment.yaml
             sed -i "s|placeholder/psicorose-frontend:latest|ghcr.io/${OWNER_LC}/psicorose-frontend:latest|g" ~/psicorose-deploy/frontend-deployment.yaml
-            sed -i "s|IP_PUBLICA|${{ secrets.EC2_HOST }}|g" ~/psicorose-deploy/ingress.yaml
             
             # Apply manifests
             sudo kubectl apply -f ~/psicorose-deploy/
