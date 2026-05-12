@@ -1,7 +1,6 @@
 # Stage 1: Build & Dependencies
 FROM node:20-slim AS base
 WORKDIR /app
-# Copiamos archivos de dependencias
 COPY package*.json ./
 RUN npm install --omit=dev
 
@@ -9,14 +8,14 @@ RUN npm install --omit=dev
 FROM node:20-slim
 WORKDIR /app
 
-# Copiamos node_modules desde la etapa base
+# Copiamos node_modules
 COPY --from=base /app/node_modules ./node_modules
-# Copiamos el código de la aplicación
+# Copiamos el código
 COPY src ./src
 COPY server.js ./
 
-# No copiamos el .env aquí por seguridad y para evitar errores si no existe en el repo.
-# Las variables se pasan vía Kubernetes Secrets.
+# CREAMOS LA CARPETA DE UPLOADS Y DAMOS PERMISOS
+RUN mkdir -p uploads/avatars uploads/posts && chmod -R 777 uploads
 
 EXPOSE 5000
 CMD ["node", "server.js"]

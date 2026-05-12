@@ -51,6 +51,14 @@ spec:
             secretKeyRef:
               name: psicorose-secrets
               key: gemini-api-key
+        volumeMounts:
+        - name: uploads-storage
+          mountPath: /app/uploads
+      volumes:
+      - name: uploads-storage
+        hostPath:
+          path: /data/psicorose/uploads
+          type: DirectoryOrCreate
 ---
 apiVersion: v1
 kind: Service
