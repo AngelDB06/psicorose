@@ -4,17 +4,15 @@ metadata:
   name: psicorose-ingress
   namespace: psicorose
   annotations:
-    # Use Traefik (default in k3s)
     kubernetes.io/ingress.class: traefik
-    # Optional: Enable cert-manager for automatic SSL
-    # cert-manager.io/cluster-issuer: letsencrypt-prod
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
-  # tls:
-  # - hosts:
-  #   - psicorose.IP_PUBLICA.sslip.io
-  #   secretName: psicorose-tls
+  tls:
+  - hosts:
+    - psicorose.54.165.173.244.sslip.io
+    secretName: psicorose-tls
   rules:
-  - host: psicorose.IP_PUBLICA.sslip.io # Placeholder: Reemplazar IP_PUBLICA con la IP real
+  - host: psicorose.54.165.173.244.sslip.io
     http:
       paths:
       - path: /api
