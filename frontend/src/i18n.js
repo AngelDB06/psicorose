@@ -170,9 +170,21 @@ i18n
             title:    '¿Cómo podemos ayudarte?',
             subtitle: 'Ofrecemos espacios de terapia adaptados a tus necesidades clínicas, basados en el respeto mutuo, la escucha activa y el rigor profesional.',
             items: [
-              { title: 'Psicoterapia Infantil',   desc: 'Acompañamiento especializado para los más pequeños, adaptando las técnicas a su etapa de desarrollo y necesidades emocionales.' },
-              { title: 'Terapia Adolescentes',    desc: 'Un espacio seguro para que los jóvenes exploren su identidad, gestionen sus emociones y superen sus desafíos actuales.' },
-              { title: 'Psicología Adultos',      desc: 'Terapia individual centrada en resolver problemas de ansiedad, estrés, depresión y mejorar el bienestar emocional general.' },
+              { 
+                title: 'Psicoterapia Infantil',   
+                desc: 'Acompañamiento especializado para los más pequeños, adaptando las técnicas a su etapa de desarrollo.',
+                details: 'La psicoterapia infantil es un espacio donde el niño puede expresar sus emociones a través del juego, el dibujo y el lenguaje. Nuestro enfoque se centra en identificar las causas del malestar (ansiedad, miedos, problemas de conducta) y proporcionar herramientas tanto al niño como a los padres para restaurar el equilibrio familiar. Entendemos que cada niño tiene su propio ritmo y lenguaje, por lo que adaptamos cada sesión para que se sienta seguro y comprendido.'
+              },
+              { 
+                title: 'Terapia Adolescentes',    
+                desc: 'Un espacio seguro para que los jóvenes exploren su identidad y superen sus desafíos actuales.',
+                details: 'La adolescencia es una etapa de grandes cambios y búsqueda de identidad. En PsicoRose, ofrecemos a los jóvenes un lugar confidencial donde pueden hablar sin ser juzgados. Trabajamos temas como la autoestima, las relaciones sociales, el acoso escolar, la gestión del estrés académico y los conflictos familiares. El objetivo es fortalecer su resiliencia y ayudarles a construir una base emocional sólida para su vida adulta.'
+              },
+              { 
+                title: 'Psicología Adultos',      
+                desc: 'Terapia individual centrada en resolver problemas de ansiedad, estrés y mejorar el bienestar emocional.',
+                details: 'La terapia para adultos es un proceso de autoconocimiento y cambio. Ya sea que estés atravesando una crisis puntual, sufras de ansiedad crónica, depresión o simplemente sientas que no avanzas en tu vida, aquí encontrarás un apoyo profesional basado en la evidencia. Utilizamos un enfoque integrativo para abordar el origen de los conflictos y desarrollar estrategias prácticas que te permitan vivir de una manera más plena, consciente y autónoma.'
+              },
             ],
           },
           dashboard: {
@@ -372,9 +384,21 @@ i18n
             title:    'How can we help you?',
             subtitle: 'We offer therapy spaces tailored to your clinical needs, based on mutual respect, active listening and professional rigor.',
             items: [
-              { title: 'Child Psychotherapy',     desc: 'Specialized support for the youngest, adapting techniques to their developmental stage and emotional needs.' },
-              { title: 'Adolescent Therapy',      desc: 'A safe space for young people to explore their identity, manage their emotions and overcome current challenges.' },
-              { title: 'Adult Psychology',        desc: 'Individual therapy focused on resolving anxiety, stress, and depression issues and improving overall emotional well-being.' },
+              { 
+                title: 'Child Psychotherapy',     
+                desc: 'Specialized support for the youngest, adapting techniques to their developmental stage.',
+                details: 'Child psychotherapy is a space where children can express their emotions through play, drawing, and language. Our focus is on identifying the causes of distress (anxiety, fears, behavioral problems) and providing tools for both the child and parents to restore family balance. We understand that each child has their own rhythm and language, so we adapt each session to make them feel safe and understood.'
+              },
+              { 
+                title: 'Adolescent Therapy',      
+                desc: 'A safe space for young people to explore their identity and overcome current challenges.',
+                details: 'Adolescence is a stage of great change and search for identity. At PsicoRose, we offer young people a confidential place where they can speak without being judged. We work on issues such as self-esteem, social relationships, bullying, academic stress management, and family conflicts. The goal is to strengthen their resilience and help them build a solid emotional foundation for their adult life.'
+              },
+              { 
+                title: 'Adult Psychology',        
+                desc: 'Individual therapy focused on resolving anxiety and stress issues and improving overall well-being.',
+                details: 'Adult therapy is a process of self-knowledge and change. Whether you are going through a specific crisis, suffer from chronic anxiety, depression, or simply feel that you are not moving forward in your life, here you will find professional support based on evidence. We use an integrative approach to address the origin of conflicts and develop practical strategies that allow you to live in a more fulfilling, conscious, and autonomous way.'
+              },
             ],
           },
           dashboard: {
