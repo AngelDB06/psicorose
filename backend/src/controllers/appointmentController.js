@@ -167,3 +167,32 @@ exports.updateAppointmentStatus = async (req, res) => {
     res.status(500).json({ message: 'Error al actualizar la cita' });
   }
 };
+
+// @desc    Obtener horarios ocupados para una fecha específica
+// @route   GET /api/appointments/booked-slots
+// @access  Privado
+exports.getBookedSlots = async (req, res) => {
+  try {
+    const { date } = req.query;
+
+    if (!date) {
+      return res.status(400).json({ message: 'La fecha es obligatoria' });
+    }
+
+    // Asegurarnos de que comparamos solo la fecha sin horas
+    const selectedDate = new Date(date);
+    selectedDate.setHours(0, 0, 0, 0);
+
+    const bookedAppointments = await Appointment.find({
+      date: selectedDate,
+      status: { $in: ['pending', 'confirmed'] },
+    }).select('time');
+
+    const bookedSlots = bookedAppointments.map(app => app.time);
+
+    res.json(bookedSlots);
+  } catch (error) {
+    console.error('Error en getBookedSlots:', error.message);
+    res.status(500).json({ message: 'Error al obtener horarios ocupados' });
+  }
+};

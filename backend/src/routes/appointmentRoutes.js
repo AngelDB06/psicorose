@@ -9,6 +9,7 @@ router.use(authMiddleware);
 
 router.post('/', appointmentController.createAppointment);
 router.get('/me', appointmentController.getMyAppointments);
+router.get('/booked-slots', appointmentController.getBookedSlots);
 router.patch('/:id/cancel', appointmentController.cancelAppointment);
 
 // ──────────────── Rutas de Administrador ────────────────

@@ -137,6 +137,7 @@ i18n
               'Visita sucesiva Psicología',
             ],
             days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+            no_slots_available: 'No hay horarios disponibles para este día.',
           },
 
           status: {
@@ -338,6 +339,7 @@ i18n
               'Follow-up Psychology Visit',
             ],
             days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+            no_slots_available: 'No available slots for this day.',
           },
 
           status: {

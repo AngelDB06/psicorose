@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
@@ -19,9 +19,38 @@ function BookingPage() {
   const consultationTypes = t('booking.consultation_types', { returnObjects: true });
   const dayNames          = t('booking.days',               { returnObjects: true });
 
-  const [formData, setFormData] = useState({ date: '', time: '', reason: '', notes: '' });
-  const [loading, setLoading]   = useState(false);
-  const [error, setError]       = useState('');
+  const [formData, setFormData]       = useState({ date: '', time: '', reason: '', notes: '' });
+  const [bookedSlots, setBookedSlots] = useState([]);
+  const [loading, setLoading]         = useState(false);
+  const [error, setError]             = useState('');
+
+  // Cargar slots ocupados cuando cambia la fecha
+  useEffect(() => {
+    const fetchBookedSlots = async () => {
+      if (!formData.date) return;
+      
+      try {
+        const token = localStorage.getItem('psicorose_token');
+        const response = await fetch(`/api/appointments/booked-slots?date=${formData.date}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          setBookedSlots(data);
+          
+          // Si la hora que estaba seleccionada ahora resulta estar ocupada (por un cambio de fecha), la limpiamos
+          if (data.includes(formData.time)) {
+            setFormData(prev => ({ ...prev, time: '' }));
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching booked slots:', err);
+      }
+    };
+
+    fetchBookedSlots();
+  }, [formData.date, formData.time]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -154,8 +183,8 @@ function BookingPage() {
               <label className="block text-sm font-bold text-slate-700 mb-3 uppercase tracking-wider">
                 {t('booking.step3')} <span className="text-red-400">*</span>
               </label>
-              <div className="grid grid-cols-4 gap-3">
-                {AVAILABLE_TIMES.map((time) => (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {AVAILABLE_TIMES.filter(time => !bookedSlots.includes(time)).map((time) => (
                   <button
                     key={time} type="button"
                     onClick={() => handleTimeSelect(time)}
@@ -168,6 +197,11 @@ function BookingPage() {
                     {time}
                   </button>
                 ))}
+                {formData.date && AVAILABLE_TIMES.filter(time => !bookedSlots.includes(time)).length === 0 && (
+                  <p className="col-span-4 text-center py-4 bg-slate-50 rounded-xl text-slate-500 text-sm italic">
+                    {t('booking.no_slots_available')}
+                  </p>
+                )}
               </div>
             </div>
 
