@@ -12,8 +12,9 @@ const N8N_REMINDER_WEBHOOK = process.env.N8N_WEBHOOK_URL;
  * a cada paciente a través de n8n (o email directo si no hay webhook).
  */
 const startReminderJob = () => {
-  cron.schedule('0 10 * * *', async () => {
-    console.log('⏰ [Cron] Procesando recordatorios para n8n...');
+  // Se ejecuta cada 30 minutos para pruebas
+  cron.schedule('*/30 * * * *', async () => {
+    console.log('⏰ [Cron] Ejecutando escaneo de recordatorios (cada 30 min)...');
 
     try {
       const tomorrow = new Date();

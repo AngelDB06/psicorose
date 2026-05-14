@@ -1,0 +1,60 @@
+<div
+  style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f8fafc; padding: 40px; border-radius: 24px;">
+  <div
+    style="background-color: #ffffff; padding: 48px; border-radius: 40px; box-shadow: 0 20px 50px rgba(79, 70, 229, 0.05); border: 1px solid #f1f5f9;">
+
+    <!-- Logo/Cabecera -->
+    <div style="text-align: center; margin-bottom: 40px;">
+      <span
+        style="background-color: #e0e7ff; color: #4338ca; padding: 8px 16px; border-radius: 100px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px;">
+        PsicoRose
+      </span>
+      <h1 style="color: #1e293b; margin: 20px 0 10px 0; font-size: 28px; font-weight: 900; letter-spacing: -1px;">
+        Recordatorio de sesión</h1>
+    </div>
+
+    <!-- Cuerpo del mensaje -->
+    <div style="color: #475569; line-height: 1.8; font-size: 17px; margin-bottom: 40px; text-align: left;">
+      Hola, <strong style="color: #4f46e5;">{{ $json.body.name }}</strong>:<br><br>
+      Te escribo este pequeño mensaje para recordarte que tenemos programada nuestra próxima sesión para mañana.
+      <br><br>
+      Para mí es un placer acompañarte en este camino y espero que este espacio te siga ayudando en tu proceso de
+      bienestar.
+    </div>
+
+    <!-- Tarjeta de Detalles (Colores Web) -->
+    <div
+      style="background-image: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); padding: 32px; border-radius: 24px; margin-bottom: 40px; border: 1px solid #ddd6fe; text-align: center;">
+      <p
+        style="margin: 0 0 12px 0; font-size: 13px; color: #7c3aed; text-transform: uppercase; letter-spacing: 2px; font-weight: 800;">
+        Horario Programado
+      </p>
+      <p style="margin: 0; font-size: 24px; color: #4338ca; font-weight: 900;">
+        Mañana a las {{ $json.body.time }}h
+      </p>
+      <p style="margin: 8px 0 0 0; font-size: 15px; color: #6d28d9; font-weight: 500;">
+        Motivo: {{ $json.body.reason }}
+      </p>
+    </div>
+
+    <!-- Despedida (Siempre visible y elegante) -->
+    <div style="text-align: center; padding-top: 20px; border-top: 1px solid #f1f5f9;">
+      <p style="font-size: 16px; color: #64748b; margin: 0; font-style: italic;">
+        Con mucho cariño,
+      </p>
+      <p style="font-size: 18px; color: #1e293b; margin: 5px 0 0 0; font-weight: 800;">
+        Rosa María Barranco Torres
+      </p>
+      <p style="font-size: 13px; color: #94a3b8; margin: 5px 0 0 0;">
+        Psicóloga Sanitaria
+      </p>
+    </div>
+  </div>
+
+  <!-- Footer pequeñito -->
+  <div style="text-align: center; margin-top: 24px;">
+    <p style="font-size: 12px; color: #cbd5e1; margin: 0;">
+      &copy; 2026 PsicoRose · Centro de Psicología
+    </p>
+  </div>
+</div>
