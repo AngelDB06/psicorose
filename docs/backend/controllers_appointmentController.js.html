@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: controllers/appointmentController.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: controllers/appointmentController.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const Appointment = require('../models/Appointment');
+const { sendBookingConfirmation, sendAppointmentConfirmed, sendAppointmentCancelled } = require('../services/emailService');
+
+/**
+ * @desc    Crear nueva cita
+ * @route   POST /api/appointments
+ * @access  Privado
+ */
+exports.createAppointment = async (req, res) => {
+  try {
+    const { date, time, reason, notes } = req.body;
+
+    if (!date || !time || !reason) {
+      return res.status(400).json({ message: 'Fecha, hora y motivo son obligatorios' });
+    }
+
+    // Comprobar que la fecha no sea en el pasado
+    const selectedDate = new Date(date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (selectedDate &lt; today) {
+      return res.status(400).json({ message: 'No puedes reservar una cita en una fecha pasada' });
+    }
+
+    // Comprobar que no exista ya una cita en ese día y hora
+    const existingAppointment = await Appointment.findOne({
+      date: selectedDate,
+      time,
+      status: { $in: ['pending', 'confirmed'] },
+    });
+
+    if (existingAppointment) {
+      return res.status(409).json({ message: 'Ese horario ya está ocupado. Por favor elige otro.' });
+    }
+
+    const appointment = await Appointment.create({
+      user: req.user._id,
+      date: selectedDate,
+      time,
+      reason,
+      notes: notes || '',
+    });
+
+    // Enviar correo de confirmación (sin bloquear la respuesta si falla)
+    sendBookingConfirmation(req.user.email, req.user.name, {
+      date: selectedDate,
+      time,
+      reason,
+    }).catch((err) => console.error('⚠️  Error enviando confirmación por email:', err.message));
+
+    res.status(201).json(appointment);
+  } catch (error) {
+    console.error('Error en createAppointment:', error.message);
+    res.status(500).json({ message: 'Error al crear la cita' });
+  }
+};
+
+/**
+ * @desc    Obtener las citas del usuario autenticado
+ * @route   GET /api/appointments/me
+ * @access  Privado
+ */
+exports.getMyAppointments = async (req, res) => {
+  try {
+    const appointments = await Appointment.find({ user: req.user._id })
+      .sort({ date: 1, time: 1 }); // Ordenar por fecha y hora ascendente
+
+    res.json(appointments);
+  } catch (error) {
+    console.error('Error en getMyAppointments:', error.message);
+    res.status(500).json({ message: 'Error al obtener las citas' });
+  }
+};
+
+/**
+ * @desc    Cancelar una cita
+ * @route   PATCH /api/appointments/:id/cancel
+ * @access  Privado
+ */
+exports.cancelAppointment = async (req, res) => {
+  try {
+    const appointment = await Appointment.findById(req.params.id);
+
+    if (!appointment) {
+      return res.status(404).json({ message: 'Cita no encontrada' });
+    }
+
+    // Verificar que la cita pertenece al usuario autenticado
+    if (appointment.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'No tienes permiso para cancelar esta cita' });
+    }
+
+    if (appointment.status === 'cancelled') {
+      return res.status(400).json({ message: 'Esta cita ya está cancelada' });
+    }
+
+    if (appointment.status === 'completed') {
+      return res.status(400).json({ message: 'No puedes cancelar una cita completada' });
+    }
+
+    appointment.status = 'cancelled';
+    await appointment.save();
+
+    res.json({ message: 'Cita cancelada correctamente', appointment });
+  } catch (error) {
+    console.error('Error en cancelAppointment:', error.message);
+    res.status(500).json({ message: 'Error al cancelar la cita' });
+  }
+};
+
+// ──────────────── Funciones de Administrador ────────────────
+
+/**
+ * @desc    Obtener todas las citas (Admin)
+ * @route   GET /api/appointments
+ * @access  Privado/Admin
+ */
+exports.getAllAppointments = async (req, res) => {
+  try {
+    const appointments = await Appointment.find({})
+      .populate('user', 'name email phone')
+      .sort({ date: 1, time: 1 });
+
+    res.json(appointments);
+  } catch (error) {
+    console.error('Error en getAllAppointments:', error.message);
+    res.status(500).json({ message: 'Error al obtener todas las citas' });
+  }
+};
+
+/**
+ * @desc    Actualizar el estado de una cita (Admin)
+ * @route   PATCH /api/appointments/:id/status
+ * @access  Privado/Admin
+ */
+exports.updateAppointmentStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+
+    const validStatuses = ['pending', 'confirmed', 'cancelled', 'completed'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ message: 'Estado inválido' });
+    }
+
+    const appointment = await Appointment.findById(req.params.id).populate('user', 'name email');
+
+    if (!appointment) {
+      return res.status(404).json({ message: 'Cita no encontrada' });
+    }
+
+    const oldStatus = appointment.status;
+    appointment.status = status;
+    await appointment.save();
+
+    // Si el estado cambia a confirmado, enviar email al usuario
+    if (status === 'confirmed' &amp;&amp; oldStatus !== 'confirmed') {
+      sendAppointmentConfirmed(appointment.user.email, appointment.user.name, {
+        date: appointment.date,
+        time: appointment.time,
+        reason: appointment.reason,
+      }).catch((err) => console.error('⚠️ Error enviando confirmación definitiva:', err.message));
+    }
+
+    // Si el estado cambia a cancelado, enviar email al usuario
+    if (status === 'cancelled' &amp;&amp; oldStatus !== 'cancelled') {
+      sendAppointmentCancelled(appointment.user.email, appointment.user.name, {
+        date: appointment.date,
+        time: appointment.time,
+        reason: appointment.reason,
+      }).catch((err) => console.error('⚠️ Error enviando notificación de cancelación:', err.message));
+    }
+
+    res.json({ message: 'Estado actualizado correctamente', appointment });
+  } catch (error) {
+    console.error('Error en updateAppointmentStatus:', error.message);
+    res.status(500).json({ message: 'Error al actualizar la cita' });
+  }
+};
+
+/**
+ * @desc    Obtener horarios ocupados para una fecha específica
+ * @route   GET /api/appointments/booked-slots
+ * @access  Privado
+ */
+exports.getBookedSlots = async (req, res) => {
+  try {
+    const { date } = req.query;
+
+    if (!date) {
+      return res.status(400).json({ message: 'La fecha es obligatoria' });
+    }
+
+    // Asegurarnos de que comparamos solo la fecha sin horas
+    const selectedDate = new Date(date);
+    selectedDate.setHours(0, 0, 0, 0);
+
+    const bookedAppointments = await Appointment.find({
+      date: selectedDate,
+      status: { $in: ['pending', 'confirmed'] },
+    }).select('time');
+
+    const bookedSlots = bookedAppointments.map(app => app.time);
+
+    res.json(bookedSlots);
+  } catch (error) {
+    console.error('Error en getBookedSlots:', error.message);
+    res.status(500).json({ message: 'Error al obtener horarios ocupados' });
+  }
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#cancelAppointment">cancelAppointment</a></li><li><a href="global.html#createAppointment">createAppointment</a></li><li><a href="global.html#getAllAppointments">getAllAppointments</a></li><li><a href="global.html#getBookedSlots">getBookedSlots</a></li><li><a href="global.html#getMyAppointments">getMyAppointments</a></li><li><a href="global.html#startReminderJob">startReminderJob</a></li><li><a href="global.html#updateAppointmentStatus">updateAppointmentStatus</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Thu May 14 2026 07:58:55 GMT+0000 (Coordinated Universal Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
