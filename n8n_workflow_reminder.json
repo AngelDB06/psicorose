@@ -1,0 +1,65 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "psicorose-reminder",
+        "options": {}
+      },
+      "id": "1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "model": "gemini-pro",
+        "prompt": "=Redacta un recordatorio de cita muy empático y cercano para un paciente de psicología llamado {{ $node[\"Webhook\"].json[\"body\"][\"name\"] }}. \n\nMotivo de la consulta: {{ $node[\"Webhook\"].json[\"body\"][\"reason\"] }}\nFecha: {{ $node[\"Webhook\"].json[\"body\"][\"date\"] }}\nHora: {{ $node[\"Webhook\"].json[\"body\"][\"time\"] }}\n\nEl tono debe ser relajante y motivador. No uses más de 3 frases.",
+        "options": {}
+      },
+      "id": "2",
+      "name": "IA - Mensaje Empático",
+      "type": "n8n-nodes-base.googleGemini",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "rosa@psicorose.com",
+        "toEmail": "={{ $node[\"Webhook\"].json[\"body\"][\"email\"] }}",
+        "subject": "Recordatorio de nuestra sesión de mañana",
+        "html": "={{ $node[\"IA - Mensaje Empático\"].json[\"text\"] }}"
+      },
+      "id": "3",
+      "name": "Enviar Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [650, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "IA - Mensaje Empático",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IA - Mensaje Empático": {
+      "main": [
+        [
+          {
+            "node": "Enviar Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

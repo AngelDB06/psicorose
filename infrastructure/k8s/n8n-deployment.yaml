@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: n8n
+  namespace: psicorose
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: n8n
+  template:
+    metadata:
+      labels:
+        app: n8n
+    spec:
+      containers:
+      - name: n8n
+        image: n8nio/n8n:latest
+        ports:
+        - containerPort: 5678
+        env:
+        - name: N8N_HOST
+          value: "n8n.2dawangeldb.com"
+        - name: WEBHOOK_URL
+          value: "https://n8n.2dawangeldb.com/"
+        - name: N8N_PROTOCOL
+          value: "https"
+        - name: NODE_ENV
+          value: "production"
+        volumeMounts:
+        - name: n8n-data
+          mountPath: /home/node/.n8n
+      volumes:
+      - name: n8n-data
+        hostPath:
+          path: /data/psicorose/n8n
+          type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: n8n-service
+  namespace: psicorose
+spec:
+  selector:
+    app: n8n
+  ports:
+  - protocol: TCP
+    port: 5678
+    targetPort: 5678
