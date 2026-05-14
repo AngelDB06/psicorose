@@ -1,9 +1,11 @@
 const Appointment = require('../models/Appointment');
 const { sendBookingConfirmation, sendAppointmentConfirmed, sendAppointmentCancelled } = require('../services/emailService');
 
-// @desc    Crear nueva cita
-// @route   POST /api/appointments
-// @access  Privado
+/**
+ * @desc    Crear nueva cita
+ * @route   POST /api/appointments
+ * @access  Privado
+ */
 exports.createAppointment = async (req, res) => {
   try {
     const { date, time, reason, notes } = req.body;
@@ -54,9 +56,11 @@ exports.createAppointment = async (req, res) => {
   }
 };
 
-// @desc    Obtener las citas del usuario autenticado
-// @route   GET /api/appointments/me
-// @access  Privado
+/**
+ * @desc    Obtener las citas del usuario autenticado
+ * @route   GET /api/appointments/me
+ * @access  Privado
+ */
 exports.getMyAppointments = async (req, res) => {
   try {
     const appointments = await Appointment.find({ user: req.user._id })
@@ -69,9 +73,11 @@ exports.getMyAppointments = async (req, res) => {
   }
 };
 
-// @desc    Cancelar una cita
-// @route   PATCH /api/appointments/:id/cancel
-// @access  Privado
+/**
+ * @desc    Cancelar una cita
+ * @route   PATCH /api/appointments/:id/cancel
+ * @access  Privado
+ */
 exports.cancelAppointment = async (req, res) => {
   try {
     const appointment = await Appointment.findById(req.params.id);
@@ -105,9 +111,11 @@ exports.cancelAppointment = async (req, res) => {
 
 // ──────────────── Funciones de Administrador ────────────────
 
-// @desc    Obtener todas las citas (Admin)
-// @route   GET /api/appointments
-// @access  Privado/Admin
+/**
+ * @desc    Obtener todas las citas (Admin)
+ * @route   GET /api/appointments
+ * @access  Privado/Admin
+ */
 exports.getAllAppointments = async (req, res) => {
   try {
     const appointments = await Appointment.find({})
@@ -121,9 +129,11 @@ exports.getAllAppointments = async (req, res) => {
   }
 };
 
-// @desc    Actualizar el estado de una cita (Admin)
-// @route   PATCH /api/appointments/:id/status
-// @access  Privado/Admin
+/**
+ * @desc    Actualizar el estado de una cita (Admin)
+ * @route   PATCH /api/appointments/:id/status
+ * @access  Privado/Admin
+ */
 exports.updateAppointmentStatus = async (req, res) => {
   try {
     const { status } = req.body;
@@ -168,9 +178,11 @@ exports.updateAppointmentStatus = async (req, res) => {
   }
 };
 
-// @desc    Obtener horarios ocupados para una fecha específica
-// @route   GET /api/appointments/booked-slots
-// @access  Privado
+/**
+ * @desc    Obtener horarios ocupados para una fecha específica
+ * @route   GET /api/appointments/booked-slots
+ * @access  Privado
+ */
 exports.getBookedSlots = async (req, res) => {
   try {
     const { date } = req.query;

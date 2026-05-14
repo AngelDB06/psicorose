@@ -1,0 +1,20 @@
+{
+    "plugins": ["plugins/markdown", "node_modules/jsdoc-babel"],
+    "source": {
+        "include": ["frontend/src"],
+        "includePattern": ".+\\.jsx?$",
+        "excludePattern": "(^|\\/|\\\\)_"
+    },
+    "opts": {
+        "destination": "docs/frontend",
+        "recurse": true,
+        "readme": "frontend/README.md"
+    },
+    "templates": {
+        "cleverLinks": true,
+        "monospaceLinks": true
+    },
+    "babel": {
+        "presets": ["@babel/preset-react"]
+    }
+}

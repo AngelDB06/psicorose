@@ -15,12 +15,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Install JSDoc
-        run: npm install -g jsdoc
+      - name: Install JSDoc and Plugins
+        run: npm install -g jsdoc jsdoc-babel @babel/core @babel/preset-react
       - name: Generate Backend Docs
-        run: jsdoc -r backend/src -d docs/backend
+        run: jsdoc -c backend/jsdoc.json
       - name: Generate Frontend Docs
-        run: jsdoc -r frontend/src -d docs/frontend
+        run: jsdoc -c frontend/jsdoc.json
       - name: Commit and Push Docs
         run: |
           git config --global user.name "GitHub Action"

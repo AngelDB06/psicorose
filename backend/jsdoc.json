@@ -1,0 +1,16 @@
+{
+    "source": {
+        "include": ["backend/src", "backend/server.js"],
+        "includePattern": ".+\\.js$",
+        "excludePattern": "(^|\\/|\\\\)_"
+    },
+    "opts": {
+        "destination": "docs/backend",
+        "recurse": true,
+        "readme": "backend/README.md"
+    },
+    "templates": {
+        "cleverLinks": true,
+        "monospaceLinks": true
+    }
+}
