@@ -84,27 +84,19 @@ function HeroSection() {
           {t('home.hero_subtitle')}
         </motion.p>
 
-        <motion.div
+        <motion.div 
           variants={itemVariants}
           className="flex flex-col sm:flex-row items-center gap-5 pt-4"
         >
           <Link to="/reservar" className="w-full sm:w-auto">
-            <motion.button
+            <motion.button 
               whileHover={{ scale: 1.05, boxShadow: "0 20px 25px -5px rgba(var(--primary-500-rgb), 0.3)" }}
               whileTap={{ scale: 0.95 }}
-              className="w-full bg-primary-500 text-white px-10 py-4 rounded-2xl font-bold text-lg shadow-xl shadow-primary-200/50 transition-colors hover:bg-primary-600"
+              className="w-full sm:w-auto bg-primary-500 text-white px-12 py-5 rounded-2xl font-bold text-xl shadow-xl shadow-primary-200/50 transition-colors hover:bg-primary-600"
             >
               {t('home.book_now')}
             </motion.button>
           </Link>
-
-          <motion.button
-            whileHover={{ scale: 1.05, backgroundColor: "#f8fafc" }}
-            whileTap={{ scale: 0.95 }}
-            className="w-full sm:w-auto bg-white text-slate-700 px-10 py-4 rounded-2xl font-bold text-lg border-2 border-slate-100 shadow-sm flex items-center justify-center gap-3 transition-all"
-          >
-            <span className="text-2xl">🤖</span> {t('home.ai_assistant')}
-          </motion.button>
         </motion.div>
       </motion.div>
 

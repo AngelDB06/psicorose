@@ -1,15 +1,27 @@
 import React from 'react';
 import rosaImg from '../assets/rosa.jpg';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const PILLAR_ICONS = ['🎯', '🔬', '🤝', '🚀'];
 const AUTOSUFICIENTES_KEY = 'AUTOSUFICIENTES';
 
 function AboutPage() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   const paragraphs = t('about.paragraphs', { returnObjects: true });
   const pillars    = t('about.pillars',    { returnObjects: true });
+
+  const handleBooking = () => {
+    if (isAuthenticated) {
+      navigate('/reservar');
+    } else {
+      navigate('/login');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -67,12 +79,12 @@ function AboutPage() {
               return (
                 <div key={i} className="mt-10 p-8 rounded-3xl bg-gradient-to-r from-primary-50 to-blue-50 border border-primary-100 text-center">
                   <p className="text-primary-800 text-lg font-medium leading-relaxed italic">{text}</p>
-                  <a
-                    href="/reservas"
+                  <button
+                    onClick={handleBooking}
                     className="mt-6 inline-block bg-primary-500 hover:bg-primary-600 text-white px-8 py-3.5 rounded-full font-semibold transition-all shadow-lg shadow-primary-200/50 hover:-translate-y-0.5"
                   >
                     {t('about.book_cta')}
-                  </a>
+                  </button>
                 </div>
               );
             }
