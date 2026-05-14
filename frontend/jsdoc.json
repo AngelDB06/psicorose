@@ -1,5 +1,5 @@
 {
-    "plugins": ["plugins/markdown", "node_modules/jsdoc-babel"],
+    "plugins": ["plugins/markdown", "jsdoc-babel"],
     "source": {
         "include": ["frontend/src"],
         "includePattern": ".+\\.jsx?$",

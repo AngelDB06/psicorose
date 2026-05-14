@@ -16,11 +16,11 @@ jobs:
         with:
           node-version: '20'
       - name: Install JSDoc and Plugins
-        run: npm install -g jsdoc jsdoc-babel @babel/core @babel/preset-react
+        run: npm install jsdoc jsdoc-babel @babel/core @babel/preset-react
       - name: Generate Backend Docs
-        run: jsdoc -c backend/jsdoc.json
+        run: npx jsdoc -c backend/jsdoc.json
       - name: Generate Frontend Docs
-        run: jsdoc -c frontend/jsdoc.json
+        run: npx jsdoc -c frontend/jsdoc.json
       - name: Commit and Push Docs
         run: |
           git config --global user.name "GitHub Action"
