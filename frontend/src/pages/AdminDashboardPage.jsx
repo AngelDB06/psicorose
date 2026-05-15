@@ -21,7 +21,8 @@ function AdminDashboardPage() {
   const fetchAppointments = async () => {
     try {
       const token = localStorage.getItem('psicorose_token');
-      const response = await fetch('/api/appointments', {
+      // Añadimos un timestamp (?t=...) para evitar que el navegador use una versión vieja de los datos
+      const response = await fetch(`/api/appointments?t=${Date.now()}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) throw new Error('Error al cargar las citas');
@@ -38,7 +39,7 @@ function AdminDashboardPage() {
     setLoadingHistory(true);
     try {
       const token = localStorage.getItem('psicorose_token');
-      let url = '/api/appointments?showAll=true';
+      let url = `/api/appointments?showAll=true&t=${Date.now()}`;
       if (patientId !== 'all') url += `&userId=${patientId}`;
       
       const response = await fetch(url, {
