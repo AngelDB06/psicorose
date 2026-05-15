@@ -208,3 +208,29 @@ exports.getBookedSlots = async (req, res) => {
     res.status(500).json({ message: 'Error al obtener horarios ocupados' });
   }
 };
+
+/**
+ * Exporta todas las citas del sistema en formato CSV.
+ * @param {Object} req - Objeto de petición.
+ * @param {Object} res - Objeto de respuesta.
+ */
+exports.exportAppointments = async (req, res) => {
+  try {
+    const appointments = await Appointment.find()
+      .populate('user', 'name email')
+      .sort({ date: -1 });
+
+    let csv = 'ID,Paciente,Email,Fecha,Hora,Motivo,Estado\n';
+
+    appointments.forEach(appt => {
+      const dateStr = appt.date ? new Date(appt.date).toLocaleDateString() : 'N/A';
+      csv += `${appt._id},${appt.user?.name || 'N/A'},${appt.user?.email || 'N/A'},${dateStr},${appt.time},"${appt.reason}",${appt.status}\n`;
+    });
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=citas_psicorose.csv');
+    res.status(200).send(csv);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al exportar citas', error: error.message });
+  }
+};

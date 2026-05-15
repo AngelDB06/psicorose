@@ -3,8 +3,19 @@ const cors = require('cors');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
+
+// ──────────────── Configuración de Logs ────────────────
+const logsDir = path.join(__dirname, 'logs');
+if (!fs.existsSync(logsDir)) {
+  fs.mkdirSync(logsDir);
+}
+
+// Log de acceso (todas las peticiones)
+const accessLogStream = fs.createWriteStream(path.join(logsDir, 'access.log'), { flags: 'a' });
+app.use(morgan('combined', { stream: accessLogStream }));
 
 // Servir archivos estáticos (avatars, imágenes de blog, etc.)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -26,7 +37,7 @@ app.use(express.urlencoded({ extended: true }));
 // Cookies
 app.use(cookieParser());
 
-// Logging de peticiones HTTP en desarrollo
+// Logging de peticiones HTTP en consola para desarrollo
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
@@ -71,6 +82,12 @@ app.use((req, res) => {
 
 // Error global
 app.use((err, req, res, next) => {
+  const errorMessage = `[${new Date().toISOString()}] ❌ Error: ${err.message}\n${err.stack}\n\n`;
+  
+  // Guardar error en archivo
+  const errorLogPath = path.join(__dirname, 'logs', 'error.log');
+  fs.appendFileSync(errorLogPath, errorMessage);
+
   console.error('❌ Error:', err.message);
   res.status(err.statusCode || 500).json({
     message: err.message || 'Error interno del servidor',

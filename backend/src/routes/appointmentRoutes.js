@@ -14,6 +14,7 @@ router.patch('/:id/cancel', appointmentController.cancelAppointment);
 
 // ──────────────── Rutas de Administrador ────────────────
 router.get('/', adminMiddleware, appointmentController.getAllAppointments);
+router.get('/export', adminMiddleware, appointmentController.exportAppointments);
 router.patch('/:id/status', adminMiddleware, appointmentController.updateAppointmentStatus);
 
 module.exports = router;

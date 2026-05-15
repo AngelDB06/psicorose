@@ -25,35 +25,39 @@ const startReminderJob = () => {
       dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 1);
 
       const appointments = await Appointment.find({
-        status: { $in: ['pending', 'confirmed'] },
+        status: 'confirmed',
         date: { $gte: tomorrow, $lt: dayAfterTomorrow },
+        reminderSent: false,
       }).populate('user', 'name email');
 
-      if (appointments.length === 0) {
-        console.log('   → No hay citas para mañana.');
-        return;
-      }
+      if (appointments.length === 0) return;
 
       for (const appt of appointments) {
-        if (N8N_REMINDER_WEBHOOK) {
-          // ENVIAR A n8n PARA PROCESAMIENTO CON IA
-          await axios.post(N8N_REMINDER_WEBHOOK, {
-            email: appt.user.email,
-            name: appt.user.name,
-            date: appt.date,
-            time: appt.time,
-            reason: appt.reason,
-            type: 'reminder_24h'
-          });
-          console.log(`   🚀 Enviado a n8n: ${appt.user.email}`);
-        } else {
-          // Fallback: Email estándar si n8n no está configurado
-          await sendReminder(appt.user.email, appt.user.name, {
-            date: appt.date,
-            time: appt.time,
-            reason: appt.reason,
-          });
-          console.log(`   📧 Email enviado (fallback): ${appt.user.email}`);
+        try {
+          if (N8N_REMINDER_WEBHOOK) {
+            await axios.post(N8N_REMINDER_WEBHOOK, {
+              email: appt.user.email,
+              name: appt.user.name,
+              date: appt.date,
+              time: appt.time,
+              reason: appt.reason,
+              type: 'reminder_24h'
+            });
+            console.log(`   🚀 Enviado a n8n: ${appt.user.email}`);
+          } else {
+            await sendReminder(appt.user.email, appt.user.name, {
+              date: appt.date,
+              time: appt.time,
+              reason: appt.reason,
+            });
+            console.log(`   📧 Email enviado (fallback): ${appt.user.email}`);
+          }
+
+          // MARCAR COMO ENVIADO PARA NO REPETIR
+          appt.reminderSent = true;
+          await appt.save();
+        } catch (err) {
+          console.error(`   ❌ Error con la cita ${appt._id}:`, err.message);
         }
       }
     } catch (error) {
