@@ -13,6 +13,7 @@ function AdminDashboardPage() {
   const { logout } = useAuth();
   const [appointments, setAppointments] = useState([]);
   const [history, setHistory] = useState([]);
+  const [patientsList, setPatientsList] = useState([]); // Nueva lista para el dropdown
   const [loading, setLoading] = useState(true);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [error, setError] = useState('');
@@ -21,7 +22,6 @@ function AdminDashboardPage() {
   const fetchAppointments = async () => {
     try {
       const token = localStorage.getItem('psicorose_token');
-      // Añadimos un timestamp (?t=...) para evitar que el navegador use una versión vieja de los datos
       const response = await fetch(`/api/appointments?t=${Date.now()}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -47,6 +47,14 @@ function AdminDashboardPage() {
       });
       const data = await response.json();
       setHistory(data);
+
+      // Si estamos pidiendo TODOS, guardamos la lista de pacientes únicos para el dropdown
+      if (patientId === 'all') {
+        const unique = Array.from(new Set(data.map(a => a.user?._id)))
+          .map(id => data.find(a => a.user?._id === id)?.user)
+          .filter(u => u);
+        setPatientsList(unique);
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -90,10 +98,6 @@ function AdminDashboardPage() {
       alert('Error de conexión');
     }
   };
-
-  const uniquePatients = Array.from(new Set(history.map(a => a.user?._id)))
-    .map(id => history.find(a => a.user?._id === id)?.user)
-    .filter(u => u);
 
   const upcomingAppointments = appointments.filter(a => a.status === 'pending' || a.status === 'confirmed');
   
@@ -287,7 +291,7 @@ function AdminDashboardPage() {
                 className="bg-white border border-slate-200 text-slate-700 text-xs font-bold rounded-xl py-2 px-4 focus:ring-2 focus:ring-primary-500 shadow-sm"
               >
                 <option value="all">Todos los pacientes</option>
-                {uniquePatients.map(p => (
+                {patientsList.map(p => (
                   <option key={p._id} value={p._id}>{p.name}</option>
                 ))}
               </select>

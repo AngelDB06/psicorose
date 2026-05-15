@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 function DashboardPage() {
   const { user, logout } = useAuth();
   const location         = useLocation();
+  const navigate         = useNavigate();
   const { t, i18n }     = useTranslation();
+
+  // Redirigir si el usuario es administrador (no debe estar en el panel de pacientes)
+  useEffect(() => {
+    if (user?.role === 'admin') {
+      navigate('/admin/dashboard', { replace: true });
+    }
+  }, [user, navigate]);
 
   const [appointments, setAppointments] = useState([]);
   const [loadingAppts, setLoadingAppts] = useState(true);
