@@ -12,8 +12,11 @@ const STATUS_CONFIG = {
 function AdminDashboardPage() {
   const { logout } = useAuth();
   const [appointments, setAppointments] = useState([]);
+  const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingHistory, setLoadingHistory] = useState(false);
   const [error, setError] = useState('');
+  const [selectedPatient, setSelectedPatient] = useState('all');
 
   const fetchAppointments = async () => {
     try {
@@ -31,9 +34,35 @@ function AdminDashboardPage() {
     }
   };
 
+  const fetchHistory = async (patientId = 'all') => {
+    setLoadingHistory(true);
+    try {
+      const token = localStorage.getItem('psicorose_token');
+      let url = '/api/appointments?showAll=true';
+      if (patientId !== 'all') url += `&userId=${patientId}`;
+      
+      const response = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await response.json();
+      setHistory(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
+
   useEffect(() => {
     fetchAppointments();
+    fetchHistory();
   }, []);
+
+  const handlePatientFilter = (e) => {
+    const val = e.target.value;
+    setSelectedPatient(val);
+    fetchHistory(val);
+  };
 
   const handleStatusChange = async (id, newStatus) => {
     try {
@@ -51,6 +80,7 @@ function AdminDashboardPage() {
         setAppointments(appointments.map(appt => 
           appt._id === id ? { ...appt, status: newStatus } : appt
         ));
+        fetchHistory(selectedPatient);
       } else {
         alert('Error al actualizar el estado de la cita');
       }
@@ -60,20 +90,21 @@ function AdminDashboardPage() {
     }
   };
 
+  const uniquePatients = Array.from(new Set(appointments.map(a => a.user?._id)))
+    .map(id => appointments.find(a => a.user?._id === id)?.user)
+    .filter(u => u);
+
   const upcomingAppointments = appointments.filter(a => a.status === 'pending' || a.status === 'confirmed');
-  const pastAppointments = appointments.filter(a => a.status === 'completed' || a.status === 'cancelled');
   
-  // Estadísticas rápidas
   const today = new Date().toLocaleDateString('es-ES');
   const todayAppts = appointments.filter(a => new Date(a.date).toLocaleDateString('es-ES') === today && a.status !== 'cancelled').length;
   const pendingConfirm = appointments.filter(a => a.status === 'pending').length;
-  const totalCompleted = appointments.filter(a => a.status === 'completed').length;
+  const totalCompleted = history.filter(a => a.status === 'completed').length;
 
   return (
     <div className="min-h-screen bg-slate-50 py-10 px-6">
       <div className="max-w-7xl mx-auto space-y-10">
         
-        {/* Cabecera Superior */}
         <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 rounded-2xl bg-primary-600 flex items-center justify-center text-white shadow-lg shadow-primary-200">
@@ -88,7 +119,7 @@ function AdminDashboardPage() {
           </div>
           <div className="flex items-center gap-3">
             <button
-              onClick={fetchAppointments}
+              onClick={() => { fetchAppointments(); fetchHistory(selectedPatient); }}
               className="p-2.5 bg-white text-slate-600 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors shadow-sm"
               title="Refrescar datos"
             >
@@ -114,7 +145,6 @@ function AdminDashboardPage() {
           </div>
         )}
 
-        {/* Tarjetas de Estadísticas */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 flex items-center gap-5 group hover:shadow-md transition-shadow">
             <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
@@ -147,7 +177,7 @@ function AdminDashboardPage() {
               </svg>
             </div>
             <div>
-              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider">Finalizadas</p>
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider">Completadas</p>
               <h3 className="text-2xl font-black text-slate-900">{totalCompleted} totales</h3>
             </div>
           </div>
@@ -165,15 +195,14 @@ function AdminDashboardPage() {
           </div>
         </div>
 
-        {/* Listado de Citas */}
         <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 overflow-hidden">
           <div className="p-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
             <h2 className="text-xl font-black text-slate-800 flex items-center gap-3">
               <span className="w-1.5 h-6 bg-primary-500 rounded-full"></span>
-              Próximas Sesiones
+              Agenda Próxima
             </h2>
             <span className="bg-primary-50 text-primary-700 px-4 py-1.5 rounded-2xl text-sm font-black">
-              {upcomingAppointments.length} citas activas
+              {upcomingAppointments.length} activas
             </span>
           </div>
 
@@ -183,77 +212,51 @@ function AdminDashboardPage() {
                 {[1,2,3].map(i => <div key={i} className="h-16 bg-slate-100 rounded-2xl animate-pulse" />)}
               </div>
             ) : upcomingAppointments.length === 0 ? (
-              <div className="text-center py-20 bg-white">
-                <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl">🍃</div>
-                <h3 className="text-lg font-bold text-slate-700">No hay citas pendientes</h3>
-                <p className="text-slate-400">Todo el calendario está al día.</p>
+              <div className="text-center py-10 bg-white italic text-slate-400">
+                No hay citas próximas programadas.
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="text-slate-400 text-xs uppercase tracking-widest font-black border-b border-slate-100">
+                    <tr className="text-slate-400 text-[10px] uppercase tracking-widest font-black border-b border-slate-100">
                       <th className="px-8 py-5">Fecha y Hora</th>
                       <th className="px-8 py-5">Paciente</th>
-                      <th className="px-8 py-5">Motivo</th>
                       <th className="px-8 py-5 text-center">Estado</th>
-                      <th className="px-8 py-5 text-right">Gestión</th>
+                      <th className="px-8 py-5 text-right">Acción</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
                     {upcomingAppointments.map((appt) => {
-                      const date = new Date(appt.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'long' });
+                      const date = new Date(appt.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
                       const status = STATUS_CONFIG[appt.status];
-                      
                       return (
                         <tr key={appt._id} className="group hover:bg-slate-50/80 transition-colors">
                           <td className="px-8 py-6">
                             <div className="flex flex-col">
                               <span className="text-slate-900 font-extrabold">{date}</span>
-                              <span className="text-primary-600 font-bold text-sm">{appt.time}</span>
+                              <span className="text-primary-600 font-bold text-xs">{appt.time}</span>
                             </div>
                           </td>
-                          <td className="px-8 py-6">
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-primary-50 text-primary-600 flex items-center justify-center font-bold text-sm border border-primary-100">
-                                {appt.user?.avatar ? (
-                                  <img src={`${appt.user.avatar}`} alt="Avatar" className="w-full h-full object-cover rounded-full" />
-                                ) : (
-                                  appt.user?.name?.charAt(0).toUpperCase()
-                                )}
-                              </div>
-                              <div className="flex flex-col">
-                                <span className="text-slate-900 font-bold">{appt.user?.name || 'Usuario'}</span>
-                                <span className="text-slate-400 text-xs">{appt.user?.email}</span>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-8 py-6">
-                            <p className="text-slate-600 text-sm italic max-w-xs truncate">"{appt.reason}"</p>
+                          <td className="px-8 py-6 text-slate-700 font-bold">
+                            {appt.user?.name}
                           </td>
                           <td className="px-8 py-6 text-center">
-                            <span className={`px-3 py-1.5 rounded-2xl text-[10px] uppercase tracking-widest font-black border ${status.classes}`}>
+                            <span className={`px-2.5 py-1 rounded-xl text-[10px] uppercase tracking-widest font-black border ${status.classes}`}>
                               {status.label}
                             </span>
                           </td>
                           <td className="px-8 py-6 text-right">
-                            <div className="relative inline-block">
-                              <select
-                                className="appearance-none bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl py-2 pl-4 pr-10 focus:ring-2 focus:ring-primary-500 focus:outline-none cursor-pointer hover:bg-slate-200 transition-colors"
-                                value={appt.status}
-                                onChange={(e) => handleStatusChange(appt._id, e.target.value)}
-                              >
-                                <option value="pending">Pendiente</option>
-                                <option value="confirmed">Confirmar</option>
-                                <option value="completed">Completar</option>
-                                <option value="cancelled">Cancelar</option>
-                              </select>
-                              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                </svg>
-                              </div>
-                            </div>
+                            <select
+                              className="bg-slate-100 border-none text-[11px] font-bold rounded-lg px-2 py-1 focus:ring-2 focus:ring-primary-500"
+                              value={appt.status}
+                              onChange={(e) => handleStatusChange(appt._id, e.target.value)}
+                            >
+                              <option value="pending">Pendiente</option>
+                              <option value="confirmed">Confirmar</option>
+                              <option value="completed">Completar</option>
+                              <option value="cancelled">Cancelar</option>
+                            </select>
                           </td>
                         </tr>
                       );
@@ -265,52 +268,72 @@ function AdminDashboardPage() {
           </div>
         </div>
 
-        {/* Historial en cuadrícula compacta */}
-        <div className="grid lg:grid-cols-2 gap-8">
-          <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-200">
-            <h2 className="text-lg font-black text-slate-800 mb-6 flex items-center gap-3">
-              <span className="w-1.5 h-6 bg-slate-400 rounded-full"></span>
-              Sesiones Finalizadas
-            </h2>
-            <div className="space-y-4">
-              {pastAppointments.length === 0 ? (
-                <p className="text-slate-400 italic text-sm py-4">No hay registros pasados.</p>
-              ) : (
-                pastAppointments.slice(0, 5).map((appt) => (
-                  <div key={appt._id} className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-white rounded-lg text-xs font-bold text-slate-500 shadow-sm border border-slate-100">
-                        {new Date(appt.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}
-                      </div>
-                      <span className="font-bold text-slate-700">{appt.user?.name}</span>
-                    </div>
-                    <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider ${STATUS_CONFIG[appt.status].classes}`}>
-                      {STATUS_CONFIG[appt.status].label}
-                    </span>
-                  </div>
-                ))
-              )}
+        <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 overflow-hidden">
+          <div className="p-8 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/50">
+            <div>
+              <h2 className="text-xl font-black text-slate-800 flex items-center gap-3">
+                <span className="w-1.5 h-6 bg-slate-400 rounded-full"></span>
+                Historial Clínico / Sesiones Finalizadas
+              </h2>
+              <p className="text-sm text-slate-400 font-medium ml-4.5">Registro completo de la actividad con los pacientes</p>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Filtrar Paciente:</label>
+              <select 
+                value={selectedPatient}
+                onChange={handlePatientFilter}
+                className="bg-white border border-slate-200 text-slate-700 text-xs font-bold rounded-xl py-2 px-4 focus:ring-2 focus:ring-primary-500 shadow-sm"
+              >
+                <option value="all">Todos los pacientes</option>
+                {uniquePatients.map(p => (
+                  <option key={p._id} value={p._id}>{p.name}</option>
+                ))}
+              </select>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-primary-500 to-primary-700 rounded-[2.5rem] p-10 text-white flex flex-col justify-between shadow-xl shadow-primary-100 relative overflow-hidden">
-            <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
-            <div className="relative z-10">
-              <h3 className="text-2xl font-black mb-4">Recuerda, Rosa...</h3>
-              <p className="text-primary-50 text-lg leading-relaxed italic">
-                "Cada sesión es un paso hacia la libertad emocional. Tu labor transforma vidas."
-              </p>
-            </div>
-            <div className="flex justify-between items-end mt-12 relative z-10">
-              <div>
-                <p className="text-primary-200 text-sm font-bold uppercase tracking-widest">Estado del Sistema</p>
-                <p className="flex items-center gap-2 text-sm font-bold mt-1">
-                  <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                  Conectado y Seguro
-                </p>
+          <div className="p-0">
+            {loadingHistory ? (
+              <div className="p-20 text-center text-slate-400 font-bold animate-pulse">Cargando historial...</div>
+            ) : history.length === 0 ? (
+              <div className="text-center py-20 italic text-slate-400 font-medium">
+                No hay sesiones en el historial para este filtro.
               </div>
-              <span className="text-4xl opacity-50">🧘‍♀️</span>
-            </div>
+            ) : (
+              <div className="overflow-x-auto max-h-[500px] overflow-y-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50/80 backdrop-blur-sm text-slate-400 text-[10px] uppercase tracking-widest font-black border-b border-slate-100 sticky top-0 z-10">
+                      <th className="px-8 py-5">Fecha</th>
+                      <th className="px-8 py-5">Paciente</th>
+                      <th className="px-8 py-5">Motivo de consulta</th>
+                      <th className="px-8 py-5 text-center">Resultado</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-50">
+                    {history.map((appt) => {
+                      const date = new Date(appt.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' });
+                      const status = STATUS_CONFIG[appt.status];
+                      return (
+                        <tr key={appt._id} className="hover:bg-slate-50/50 transition-colors">
+                          <td className="px-8 py-6 text-slate-600 font-medium">{date}</td>
+                          <td className="px-8 py-6 text-slate-900 font-bold">{appt.user?.name}</td>
+                          <td className="px-8 py-6">
+                            <p className="text-slate-500 text-sm italic">"{appt.reason}"</p>
+                          </td>
+                          <td className="px-8 py-6 text-center">
+                            <span className={`px-2.5 py-1 rounded-xl text-[10px] uppercase tracking-widest font-black border ${status.classes}`}>
+                              {status.label}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </div>
 
