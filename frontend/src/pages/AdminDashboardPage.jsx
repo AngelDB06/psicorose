@@ -90,8 +90,8 @@ function AdminDashboardPage() {
     }
   };
 
-  const uniquePatients = Array.from(new Set(appointments.map(a => a.user?._id)))
-    .map(id => appointments.find(a => a.user?._id === id)?.user)
+  const uniquePatients = Array.from(new Set(history.map(a => a.user?._id)))
+    .map(id => history.find(a => a.user?._id === id)?.user)
     .filter(u => u);
 
   const upcomingAppointments = appointments.filter(a => a.status === 'pending' || a.status === 'confirmed');
