@@ -118,7 +118,12 @@ exports.cancelAppointment = async (req, res) => {
  */
 exports.getAllAppointments = async (req, res) => {
   try {
-    const appointments = await Appointment.find({})
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const appointments = await Appointment.find({
+      date: { $gte: today }
+    })
       .populate('user', 'name email phone')
       .sort({ date: 1, time: 1 });
 
