@@ -28,7 +28,7 @@ exports.getChatResponse = async (req, res) => {
         return "¡Hola! Soy el asistente virtual de PsicoRose. Estoy aquí para escucharte y darte orientación inicial. ¿En qué puedo ayudarte hoy?";
       }
       if (lowerMsg.includes('quien') || lowerMsg.includes('rosa') || lowerMsg.includes('doctora')) {
-        return "La Dra. Rosa María Barranco es una psicóloga con años de experiencia en bienestar emocional y salud mental. Su enfoque es cercano y profesional. Puedes leer más sobre ella en la sección 'Sobre mí'.";
+        return "La Dra. Rosa María Barranco es una psicóloga sanitaria colegiada (nº AO13759) con años de experiencia en bienestar emocional. Su enfoque es cercano y profesional. Puedes leer más sobre ella en la sección 'Sobre mí'.";
       }
       if (lowerMsg.includes('triste') || lowerMsg.includes('depre') || lowerMsg.includes('mal')) {
         return "Siento mucho que estés pasando por un momento difícil. Es valiente reconocer cómo te sientes. Recuerda que no estás solo/a y que hablar con un profesional puede marcar la diferencia. ¿Has pensado en agendar una consulta de valoración?";
@@ -54,7 +54,7 @@ exports.getChatResponse = async (req, res) => {
         try {
           const currentModel = genAI.getGenerativeModel({ 
             model: modelName,
-            systemInstruction: "Eres el asistente virtual de PsicoRose, la consulta de psicología de la Dra. Rosa María Barranco. Tu tono es empático, profesional y calmado. Tu función es informativa y orientativa, NO reemplazas a un terapeuta profesional. Basas tus respuestas en la psicología cognitivo-conductual. Si detectas menciones de autolesión o crisis graves, debes proporcionar números de emergencia (112 o 024 en España) inmediatamente. Sé breve y acogedor.",
+            systemInstruction: "Eres el asistente virtual de PsicoRose, la consulta de psicología de la Dra. Rosa María Barranco (Psicóloga Sanitaria, Colegiada nº AO13759). Tu tono es empático, profesional y calmado. Tu función es informativa y orientativa, NO reemplazas a un terapeuta profesional. Basas tus respuestas en la psicología cognitivo-conductual. Si detectas menciones de autolesión o crisis graves, debes proporcionar números de emergencia (112 o 024 en España) inmediatamente. Sé breve y acogedor.",
             generationConfig: { temperature: 0.5 }
           }, { apiVersion: 'v1beta' });
 
