@@ -30,6 +30,7 @@ exports.generateUserReport = async (req, res) => {
       .fontSize(10)
       .fillColor('#475569')
       .text('Dra. Rosa María Barranco Torres', { align: 'right' })
+      .text('Psicóloga Sanitaria · Col. nº AO13759', { align: 'right' })
       .text('Gabinete de Psicología Especializada', { align: 'right' })
       .moveDown();
 

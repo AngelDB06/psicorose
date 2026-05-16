@@ -51,6 +51,9 @@ function AboutPage() {
               Rosa María<br />Barranco Torres
             </h1>
             <p className="text-primary-200 text-lg max-w-xl">
+              Colegiada nº AO13759
+            </p>
+            <p className="text-primary-200 text-lg max-w-xl">
               {t('about.subtitle')}
             </p>
           </div>
