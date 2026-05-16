@@ -1,18 +1,18 @@
-# 🌹 PsicoRose - Plataforma Integral de Salud Mental
+#  PsicoRose - Plataforma Integral de Salud Mental
 
 PsicoRose es una solución tecnológica avanzada diseñada para la gestión integral de consultas de psicología sanitaria. Este proyecto combina la potencia del **MERN Stack** con automatizaciones inteligentes y despliegue profesional en la nube, optimizando la interacción entre paciente y profesional.
 
 ---
 
-## 🚀 Características Principales
+##  Características Principales
 
-### 🧘‍♂️ Para el Paciente
+###  Para el Paciente
 - **Reserva Inteligente**: Sistema de reserva de citas con disponibilidad en tiempo real.
 - **Portal Personal**: Historial de citas, gestión de perfil y descarga de reportes en PDF.
 - **Acompañamiento IA**: Chatbot de apoyo emocional 24/7 integrado con **Google Gemini**.
 - **Recordatorios Automáticos**: Notificaciones por email 24 horas antes de la cita mediante flujos de **n8n**.
 
-### 👩‍⚕️ Para el Administrador (Rosa)
+###  Para el Administrador (Rosa)
 - **Agenda Dinámica**: Dashboard optimizado para visualizar solo las citas próximas.
 - **Historial Clínico Completo**: Buscador y filtros avanzados por paciente.
 - **Gestión de Contenidos**: Panel administrativo para la publicación de artículos en el Blog.
@@ -20,7 +20,7 @@ PsicoRose es una solución tecnológica avanzada diseñada para la gestión inte
 
 ---
 
-## 🛠️ Stack Tecnológico
+##  Stack Tecnológico
 
 | Área | Tecnologías |
 | :--- | :--- |
@@ -32,20 +32,20 @@ PsicoRose es una solución tecnológica avanzada diseñada para la gestión inte
 
 ---
 
-## 📂 Estructura del Proyecto
+##  Estructura del Proyecto
 
 ```text
-📁 psicorose/
-├── 📁 frontend/          # Aplicación React (Vite)
-├── 📁 backend/           # API REST (Node.js/Express)
-├── 📁 infrastructure/    # Manifiestos de Kubernetes y Dockerfiles
-├── 📁 .github/workflows  # Pipelines de Integración y Despliegue Continuo
-└── 📁 docs/              # Documentación técnica y guías de estilo
+ psicorose/
+├──  frontend/          # Aplicación React (Vite)
+├──  backend/           # API REST (Node.js/Express)
+├──  infrastructure/    # Manifiestos de Kubernetes y Dockerfiles
+├──  .github/workflows  # Pipelines de Integración y Despliegue Continuo
+└──  docs/              # Documentación técnica y guías de estilo
 ```
 
 ---
 
-## 🔧 Instalación y Desarrollo Local
+##  Instalación y Desarrollo Local
 
 ### 1. Clonar el repositorio
 ```bash
@@ -70,7 +70,7 @@ npm run dev
 
 ---
 
-## 🚢 Despliegue y DevOps
+##  Despliegue y DevOps
 
 El proyecto está diseñado para ser desplegado de forma profesional mediante contenedores:
 
@@ -80,12 +80,12 @@ El proyecto está diseñado para ser desplegado de forma profesional mediante co
 
 ---
 
-## ✒️ Autor
+##  Autor
 
 *   **Ángel Domínguez Barranco** - *Desarrollo y Diseño* - (https://github.com/tu-usuario)
 
 ---
 
-## 📄 Licencia
+##  Licencia
 
 Este proyecto ha sido desarrollado como Trabajo de Fin de Grado (TFG). Todos los derechos reservados.
