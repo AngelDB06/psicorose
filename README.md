@@ -82,7 +82,7 @@ El proyecto está diseñado para ser desplegado de forma profesional mediante co
 
 ## ✒️ Autor
 
-*   **Ángel [Tu Apellido]** - *Desarrollo y Diseño* - [Tu GitHub](https://github.com/tu-usuario)
+*   **Ángel Domínguez Barranco** - *Desarrollo y Diseño* - (https://github.com/tu-usuario)
 
 ---
 
