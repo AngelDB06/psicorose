@@ -39,7 +39,7 @@ i18n
             see_all:         'Ver todas las opiniones',
           },
           about: {
-            tag: 'Psicóloga Clínica · Col. nº XXXXX',
+            tag: 'Psicóloga Sanitaria · Col. nº AO13759',
             subtitle:
               'Especialista en terapia individual e integrativa con enfoque centrado en la persona y la evidencia científica.',
             quote_title: '¡No hay dos casos iguales!',
@@ -253,7 +253,7 @@ i18n
             see_all:         'See all reviews',
           },
           about: {
-            tag: 'Clinical Psychologist · Lic. nº XXXXX',
+            tag: 'Health Psychologist · Lic. nº AO13759',
             subtitle:
               'Specialist in individual and integrative therapy with a person-centered and evidence-based approach.',
             quote_title: 'No two cases are the same!',
