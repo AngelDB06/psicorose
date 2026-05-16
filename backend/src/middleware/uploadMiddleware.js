@@ -4,9 +4,17 @@ const path = require('path');
 // Configuración de almacenamiento dinámica
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    const fs = require('fs');
     // Si el campo es 'avatar', va a avatars. Si no, a posts.
-    const folder = file.fieldname === 'avatar' ? 'avatars' : 'posts';
-    cb(null, `src/uploads/${folder}`);
+    const subfolder = file.fieldname === 'avatar' ? 'avatars' : 'posts';
+    const finalPath = path.join(__dirname, '..', '..', 'uploads', subfolder);
+    
+    // Crear la subcarpeta si no existe
+    if (!fs.existsSync(finalPath)) {
+      fs.mkdirSync(finalPath, { recursive: true });
+    }
+    
+    cb(null, finalPath);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);

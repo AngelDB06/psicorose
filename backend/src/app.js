@@ -17,8 +17,15 @@ if (!fs.existsSync(logsDir)) {
 const accessLogStream = fs.createWriteStream(path.join(logsDir, 'access.log'), { flags: 'a' });
 app.use(morgan('combined', { stream: accessLogStream }));
 
+// Asegurar que la carpeta de uploads existe para persistencia
+const uploadsDir = path.join(__dirname, '..', 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
 // Servir archivos estáticos (avatars, imágenes de blog, etc.)
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Usamos path.join(__dirname, '..', 'uploads') para que coincida con el montaje de K8s en /app/uploads
+app.use('/uploads', express.static(uploadsDir));
 
 // ──────────────── Middlewares globales ────────────────
 
