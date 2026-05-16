@@ -127,13 +127,6 @@ const sendBookingConfirmation = async (userEmail, userName, appointment) => {
     <p style="margin:0 0 20px;color:#7a5a6a;font-size:15px;line-height:1.7;">
       Te enviaremos otro correo en cuanto la Dra. Rosa confirme la disponibilidad.
     </p>
-
-    <div style="text-align:center;margin-top:28px;">
-      <a href="${process.env.CLIENT_URL}/dashboard" 
-         style="display:inline-block;background:linear-gradient(135deg,#be5d87,#9c3d65);color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:50px;font-weight:700;font-size:15px;letter-spacing:0.3px;">
-        Ver mi panel &rarr;
-      </a>
-    </div>
   `;
 
   await transporter.sendMail({
@@ -200,13 +193,6 @@ const sendAppointmentConfirmed = async (userEmail, userName, appointment) => {
     <p style="margin:0 0 20px;color:#7a5a6a;font-size:15px;line-height:1.7;">
       Recuerda que si no puedes asistir, debes avisar con al menos 24 horas de antelación.
     </p>
-
-    <div style="text-align:center;margin-top:28px;">
-      <a href="${process.env.CLIENT_URL}/dashboard" 
-         style="display:inline-block;background:linear-gradient(135deg,#be5d87,#9c3d65);color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:50px;font-weight:700;font-size:15px;letter-spacing:0.3px;">
-        Ver en mi panel &rarr;
-      </a>
-    </div>
   `;
 
   await transporter.sendMail({
@@ -264,15 +250,8 @@ const sendReminder = async (userEmail, userName, appointment) => {
 
     <p style="margin:0 0 20px;color:#7a5a6a;font-size:15px;line-height:1.7;">
       Si por algún motivo no puedes acudir, te pedimos que canceles la cita con antelación 
-      desde tu panel personal para que podamos atender a otros pacientes.
+      para que podamos atender a otros pacientes.
     </p>
-
-    <div style="text-align:center;margin-top:28px;">
-      <a href="${process.env.CLIENT_URL}/dashboard" 
-         style="display:inline-block;background:linear-gradient(135deg,#be5d87,#9c3d65);color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:50px;font-weight:700;font-size:15px;letter-spacing:0.3px;">
-        Ver mi panel &rarr;
-      </a>
-    </div>
   `;
 
   await transporter.sendMail({
@@ -302,15 +281,8 @@ const sendAppointmentCancelled = async (userEmail, userName, appointment) => {
     <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:24px;margin-bottom:28px;">
       <p style="margin:0;color:#991b1b;font-size:14px;line-height:1.6;">
         Si no has sido tú quien ha solicitado la cancelación, es posible que la Dra. Rosa haya tenido un imprevisto. 
-        Puedes intentar reservar en otro horario o ponerte en contacto con nosotros.
+        Puedes contactar con nosotros para más información.
       </p>
-    </div>
-
-    <div style="text-align:center;margin-top:28px;">
-      <a href="${process.env.CLIENT_URL}/dashboard" 
-         style="display:inline-block;background:#3d1a29;color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:50px;font-weight:700;font-size:15px;">
-        Ver otros horarios &rarr;
-      </a>
     </div>
   `;
 
